@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "SummerProject",
+    "scheme": "AppName",
     "slug": "SummerProject",
     "version": "1.0.0",
     "orientation": "portrait",
