@@ -23,7 +23,7 @@ export default function Energy() {
 //   }, []);
 
   return (
-    <div className="containerE">
+    <div className="container">
       <NavBar />
       <h1 className="title">Energy Trading</h1>
       <div className="textBox">
