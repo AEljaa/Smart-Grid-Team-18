@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
+import NavBar from '../components/NavBar';
 
 export default function Energy() {
   const [data, setData] = useState({});
@@ -52,16 +53,17 @@ export default function Energy() {
 
   return (
     <View style={styles.container}>
+      <NavBar/>
       <Text style={styles.title}>Energy Trading</Text>
       <View style={styles.textBox}>
-        <Text>Import Cost</Text>
+      <Text style={styles.buttonText}>Import Cost</Text>
         <Text style={styles.textValue}>{2}</Text>
         <TouchableOpacity style={styles.button} onPress={() => console.log("Import")}> 
         <Text style={styles.buttonText}>Import</Text>
         </TouchableOpacity>
       </View> 
       <View style={styles.textBox}>
-        <Text>Export Cost</Text>
+      <Text style={styles.buttonText}>Export Cost</Text>
         <Text style={styles.textValue}>{3}</Text>
         <TouchableOpacity style={styles.button} onPress={() => console.log("Export")}>
             <Text style={styles.buttonText}>Export</Text>
@@ -74,10 +76,11 @@ export default function Energy() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        paddingTop: 80, // Adjust this value to move content higher or lower
+      flex: 1,
+      backgroundColor: '#150044', // Dark background color
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingtop: 80,
       },
       link: {
         color: 'blue',
@@ -87,7 +90,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 40,
-        color: 'black',
+        color: 'white',
         textAlign: 'center', // Center text horizontally
       },
       textBox: {
@@ -95,13 +98,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
       },
       textLabel: {
-        color: 'black',
+        color: '#e26a00',
         fontSize: 18,
         marginBottom: 5,
         textAlign: 'center', // Center text horizontally
       },
       textValue: {
-        color: 'black',
+        color: '#e26a00',
         fontSize: 16,
         marginBottom: 10,
         textAlign: 'center', // Center text horizontally
