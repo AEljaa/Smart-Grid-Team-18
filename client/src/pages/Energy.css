@@ -1,0 +1,66 @@
+.containerE {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #150044; /* Dark background color */
+    padding-top: 80px;
+    min-height: 100vh; /* Ensure the container takes full height */
+    color: white;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    text-align: center; /* Center text horizontally */
+  }
+  
+  .textBox {
+    margin-bottom: 20px;
+    text-align: center; /* Center text horizontally */
+  }
+  
+  .textLabel {
+    color: #ffffff;
+    font-size: 18px;
+    margin-bottom: 5px;
+    font-family: 'Reddit Sans', sans-serif;
+  }
+  
+  .textValue {
+    color: #e26a00;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-family: 'Reddit Sans', sans-serif;
+  }
+  
+  .button {
+    background-color: #007bff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 10px;
+    width: 200px; /* Adjust the width as needed */
+    text-align: center; /* Center the text inside the button */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #0056b3; /* Change the color on hover */
+  }
+  
+  .link {
+    color: blue;
+    margin-top: 20px;
+    text-decoration: none;
+    font-family: 'Reddit Sans', sans-serif;
+  }
+  
+  .link:hover {
+    text-decoration: underline;
+  }
+  
