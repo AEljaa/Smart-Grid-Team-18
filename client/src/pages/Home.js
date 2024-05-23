@@ -12,16 +12,16 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let response = await fetch("http://localhost:4000/sun");
+        let response = await fetch("http://127.0.0.1:4000/sun");
         let sunData = await response.json();
         setSunIntensity(sunData.sun);
 
-        response = await fetch("http://localhost:4000/price");
+        response = await fetch("http://127.0.0.1:4000/price");
         let priceData = await response.json();
         setBuyPrice(priceData.buy_price);
         setSellPrice(priceData.sell_price);
 
-        response = await fetch("http://localhost:4000/demand");
+        response = await fetch("http://127.0.0.1:4000/demand");
         let demandData = await response.json();
         setDemand(demandData.demand);
       } catch (error) {
