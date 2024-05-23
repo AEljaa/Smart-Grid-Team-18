@@ -2,6 +2,7 @@ import React from 'react';
 import NavBar from '../components/NavBar';
 import { Line } from 'react-chartjs-2';
 import './Historic.css';
+import{ useState, useEffect } from 'react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -23,19 +24,49 @@ import {
   );
 
 export default function Historic() {
-  // Sample data (replace this with your actual data from the JSON file)
-  const data = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Price Per Watt',
-        data: [0.20, 0.45, 0.28, 0.80, 0.99, 0.43],
-        fill: true,
-        backgroundColor: '#FFFFFF',
-        borderColor: '#FFFFFF',
-      },
-    ],
-  };
+  const [chartData, setChartData] = useState(0);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let response = await fetch("http://127.0.0.1:4000/yesterday");
+        let yesterdayData = await response.json();
+        console.log(yesterdayData);
+        let labels = yesterdayData.tick;
+        const data ={
+          labels: labels,
+          datasets: [
+            {
+              label: 'Price Per Watt (pence)',
+              data: yesterdayData.buyHist,
+              fill: true,
+              backgroundColor: 'rgba(75,192,192,0.4)',
+              borderColor: 'rgba(75,192,192,1)',
+            },
+            {
+              label: 'Price Per Watt (pence)',
+              data: yesterdayData.sellHist,
+              fill: true,
+              backgroundColor: 'rgba(153,102,255,0.4)',
+              borderColor: 'rgba(153,102,255,1)',
+            },
+            {
+              label: 'Demand',
+              data: yesterdayData.demandHist,
+              fill: true,
+              backgroundColor: 'rgba(255, 99, 132, 0.4)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+            }
+              
+          ] 
+        };
+        setChartData(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const options = {
     maintainAspectRatio: false,
@@ -44,7 +75,7 @@ export default function Historic() {
             beginAtZero: true,
             title: {
                 display: true,
-                text: 'Price Per Watt (£)', // Label for the y-axis
+                text: 'Values',
                 color: '#FFFFFF',
                 font: {
                     size: 16,
@@ -55,7 +86,7 @@ export default function Historic() {
         x: {
             title: {
                 display: true,
-                text: 'Month', // Label for the x-axis
+                text: 'Time (Ticks)',
                 color: '#FFFFFF',
                 font: {
                     size: 16,
@@ -66,16 +97,15 @@ export default function Historic() {
     },
 };
 
-
-  return (
-    <div className="container">
+return (
+  <div className="container">
       <NavBar />
       <div className="content">
-        <h1 className="title">Price Per Watt History</h1>
-        <div className="chart-container">
-          <Line data={data} options={options} />
-        </div>
+          <h1 className="title">History Data</h1>
+          <div className="chart-container">
+              {chartData ? <Line data={chartData} options={options} /> : <p>Loading...</p>}
+          </div>
       </div>
-    </div>
-  );
+  </div>
+);
 }
