@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div id="page-content"></div>
+<table>
+    <tr>
+        <th>
+            Current Buy Price
+        </th>
+        <th> Current Sell Price</th>
+        <th> Current Demand</th>
+        <th> Current light intensity</th>
+    </tr>
+    <tr>
+      <td>{{ webshowcurrentbuyprice }}</td> 
+      <td> {{webshowcurrentsellprice}}</td>  
+      <td>{{ webshowcurrentdemand}}</td>  
+      <td> {{webshowcurrentlightinsesity}}</td>   
+    </tr>
+
+</table>
+</div>
+
+{% endblock%}

@@ -9,11 +9,13 @@ app = Flask(__name__, template_folder="templates")
 def home():
    return render_template('home.html')
 
-@app.route('/page1')
-def page1():
-    return render_template('page1.html')
+@app.route('/current_prices', methods=['GET','POST'])
+def current_prices():
+    return render_template('current_prices.html',  webshowcurrentbuyprice = "666", webshowcurrentsellprice = "6", webshowcurrentdemand="3", webshowcurrentlightinsesity ="4")
 
-
+@app.route("/Histroy")
+def History():
+   return render_template("history.html",rows=[] )
 
 if __name__ == '__main__':
    app.run(debug=True)

@@ -46,6 +46,7 @@ class myclient():
         finally:
                 print("Cleaning")
                 GPIO.cleanup()
+                #give the server some time
                 time.sleep(1)
 
 class myserver():
@@ -63,7 +64,7 @@ class myserver():
         self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.mySocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
         self.mySocket.bind((self.host,self.port))
-        
+        #so it always listenis
         while not self.stop:
 
             try:
@@ -76,7 +77,6 @@ class myserver():
                 self.mydataout = str(self.mydatain).upper()
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
-
                 self.conn.close()
                 print("Disconnected:",str(self.addr[0]))
                 
@@ -87,5 +87,6 @@ class myserver():
         self.mySocket.close()
  
 if __name__ == "__main__":
+    #we just need to comment out which one we want it to run
     sender = threading.Thread(target=myclient, args=('10.10.1.138',5000), daemon=True).start()
     receiver = threading.Thread(target=myserver, args=('10.10.8.123',5001), daemon=True).start()
