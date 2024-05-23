@@ -48,14 +48,14 @@ export default function Home() {
             <div className="text-box">
               <h2 className="text-label">Instantaneous Demand</h2>
               <p className="text-value">{Math.round(demand * 1000) / 1000}W</p>
-            </div>
+            </div>            
             <div className="text-box">
-              <h2 className="text-label">Buy Price Per Watt</h2>
-              <p className="text-value">£{buyPrice}</p>
-            </div>
-            <div className="text-box">
-              <h2 className="text-label">Sell Price Per Watt</h2>
+              <h2 className="text-label">External Sell Price Per Watt</h2>
               <p className="text-value">£{sellPrice}</p>
+            </div>
+            <div className="text-box">
+              <h2 className="text-label">External Buy Price Per Watt</h2>
+              <p className="text-value">£{buyPrice}</p>
             </div>
             <div className="text-box">
               <h2 className="text-label">Generated Solar Power</h2>
