@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, jsonify
+from flask import Flask, render_template, jsonify
 import requests
 from flask_cors import CORS
 
@@ -35,6 +35,7 @@ def get_demand_data():
     except Exception as e:
         print(f"Error fetching demand data: {e}")
         return jsonify({'error': 'An error occurred while fetching demand data'}), 500
+
 
 if __name__ == '__main__':
     app.run(port=4000, debug=True) #api hosted on http://127.0.0.1:4000
