@@ -51,11 +51,11 @@ export default function Home() {
             </div>            
             <div className="text-box">
               <h2 className="text-label">External Sell Price Per Watt</h2>
-              <p className="text-value">£{sellPrice}</p>
+              <p className="text-value">£{sellPrice/100}</p>
             </div>
             <div className="text-box">
               <h2 className="text-label">External Buy Price Per Watt</h2>
-              <p className="text-value">£{buyPrice}</p>
+              <p className="text-value">£{buyPrice/100}</p>
             </div>
             <div className="text-box">
               <h2 className="text-label">Generated Solar Power</h2>

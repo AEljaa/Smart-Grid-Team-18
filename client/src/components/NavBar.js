@@ -8,8 +8,8 @@ export default function NavBar() {
     <div className="navBar">
       <img src={logo} className="logo" alt="Logo" />
       <Link to="/" className="navText">Home</Link>
-      <Link to="/historic" className="navText">Data History</Link>
-      <Link to="/energy" className="navText">Energy Algorithm</Link>
+      <Link to="/historic" className="navText">Price & Demand History</Link>
+      <Link to="/energy" className="navText">Energy Algorithm Performance</Link>
     </div>
   );
 }
