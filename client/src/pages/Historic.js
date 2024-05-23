@@ -1,6 +1,6 @@
 import React from 'react';
 import NavBar from '../components/NavBar';
-import { Line } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2'; //Followed guide here https://codesandbox.io/p/devbox/reactchartjs-react-chartjs-2-default-1695r?embed=1&file=%2FApp.tsx
 import './Historic.css';
 import{ useState, useEffect } from 'react';
 import {
@@ -36,14 +36,14 @@ export default function Historic() {
           labels: labels,
           datasets: [
             {
-              label: 'Price Per Watt (pence)',
+              label: 'External Buy Price Per Watt (pence)',
               data: yesterdayData.buyHist,
               fill: true,
               backgroundColor: 'rgba(75,192,192,0.4)',
               borderColor: 'rgba(75,192,192,1)',
             },
             {
-              label: 'Price Per Watt (pence)',
+              label: 'External Sell Price Per Watt (pence)',
               data: yesterdayData.sellHist,
               fill: true,
               backgroundColor: 'rgba(153,102,255,0.4)',

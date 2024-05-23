@@ -9,7 +9,7 @@ export default function NavBar() {
       <img src={logo} className="logo" alt="Logo" />
       <Link to="/" className="navText">Home</Link>
       <Link to="/historic" className="navText">Price & Demand History</Link>
-      <Link to="/energy" className="navText">Energy Algorithm</Link>
+      <Link to="/energy" className="navText">Energy Algorithm Performance</Link>
     </div>
   );
 }
