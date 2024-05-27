@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO  ##comment out for server: its pi only
 import time
 import socket
 import threading
