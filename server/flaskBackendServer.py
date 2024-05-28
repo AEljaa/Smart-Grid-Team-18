@@ -64,6 +64,18 @@ def get_yesterday_data():
         print(f"Error fetching yesterdays data: {e}")
         return jsonify({'error': 'An error occurred while fetching demand data'}), 500
 
+<<<<<<< HEAD
 
+=======
+@app.route('/deferables',methods=['GET'])
+def get_deferables_data():
+    try:
+        response = requests.get('https://icelec50015.azurewebsites.net/deferables')
+        deferable_data = response.json()
+        return(jsonify(deferable_data))
+    except Exception as e:
+        print(f"Error fetching yesterdays data: {e}")
+        return jsonify({'error': 'An error occurred while fetching demand data'}), 500
+>>>>>>> 0994eac (Added defereable page)
 if __name__ == '__main__':
     app.run(port=4000, debug=True) #api hosted on http://127.0.0.1:4000

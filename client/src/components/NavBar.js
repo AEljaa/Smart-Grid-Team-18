@@ -10,6 +10,7 @@ export default function NavBar() {
       <Link to="/" className="navText">Home</Link>
       <Link to="/historic" className="navText">Price & Demand History</Link>
       <Link to="/energy" className="navText">Energy Algorithm Performance</Link>
+      <Link to="/deferables " className="navText">List Of Deferables</Link>
     </div>
   );
 }
