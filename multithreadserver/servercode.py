@@ -21,7 +21,7 @@ class myclient():
                 self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.mySocket.connect((self.host,self.port))        
                 
-                #set self.mydataout as some other function
+                self.mydataout = str(self.myid)
                 self.mySocket.send(self.mydataout.encode())
                 print("Sent:",self.mydataout)
                 
@@ -45,7 +45,7 @@ class myclient():
                 
         finally:
                 print("Cleaning")
-                #GPIO.cleanup()
+                GPIO.cleanup()
                 #give the server some time
                 time.sleep(1)
 
@@ -73,12 +73,10 @@ class myserver():
                 print("Connection from:", str(self.addr[0]))
                 
                 self.mydatain = self.conn.recv(1024).decode()
-                #checks theres no error in sending
                 print("Received:", str(self.mydatain))
                 self.mydataout = str(self.mydatain).upper()
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
-                #HERE WE SEND THE UPDATE FROM THE SERVERE OF WHAT T DO
                 self.conn.close()
                 print("Disconnected:",str(self.addr[0]))
                 
@@ -91,5 +89,6 @@ class myserver():
 if __name__ == "__main__":
     #we just need to comment out which one we want it to run 
     #and put in the right ip adresses
-    sender = threading.Thread(target=myclient, args=('146.169.240.74',5001), daemon=True).start()
-    #receiver = threading.Thread(target=myserver, args=('146.169.240.74',5001), daemon=True).start()
+    #sender = threading.Thread(target=myclient, args=('10.10.1.138',5000), daemon=True).start()
+    
+        receiver = threading.Thread(target=myserver, args=('146.169.240.74',5001), daemon=True).start()
