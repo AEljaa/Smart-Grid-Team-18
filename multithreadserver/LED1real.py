@@ -18,30 +18,14 @@ class myclient():
         self.port = port
         self.count = 0
         self.stop = False
-        self.mydataout = "please work"
+        self.mydataout = ""
         self.mydatain = ""
+        self.psetpoint=0
         try: 
             #while not self.stop:
                 print("Connecting to",self.host,self.port)
                 self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                print("issue here ")
-                print("WOWOWOWOWPOWPWOWP")
                 self.mySocket.connect((self.host,self.port))        
-                #set self.mydataout as some other function
-                #print("im not gonna do this lol")
-                #self.mySocket.send(self.mydataout.encode())
-                #print("Sent:",self.mydataout)
-                
-                #self.mydatain = self.mySocket.recv(1024).decode()
-                #print("Received:",self.mydatain)
-                
-                #if self.mydataout.upper() == self.mydatain:
-                    #print("Data recieved ok")
-                #else:
-                    #print("Data error")
-                           
-                #self.mySocket.close()
-                #print("Disconnected from",self.host,self.port)
                 
         except KeyboardInterrupt:
                 print("Quitting")
@@ -54,9 +38,6 @@ class myclient():
                 
         finally:
                 print("Cleaning")
-                #self.mySocket.close()
-                print("get ehere")
-                #GPIO.cleanup()
                 #give the server some time
                 time.sleep(1)
     def senddata(self,datatosend):
@@ -69,6 +50,11 @@ class myclient():
                 
         if self.mydataout.upper() == self.mydatain:
             print("Data recieved ok")
+            ##extra reciver
+            self.mydatain = self.mySocket.recv(1024).decode()
+            print("Received:",self.mydatain)
+
+            self.psetpoint=self.mydatain
         else:
             print("Data error")
     def close(self):
@@ -138,29 +124,38 @@ while True:
     pwm.duty_u16(pwm_out)
     
     if count > 2000:
+        
+        """sender = threading.Thread(target=myclient, args=('146.169.240.74',5001))
+        sender.daemon=False
+        sender.start()"""
+        #Server IP
+        sender=myclient('146.169.219.119',5001)
+        sender.senddata(str("LED1"))
+        
+        if Psetpoint != sender.psetpoint:
+            Psetpoint = sender.psetpoint
+            print("Received:",Psetpoint)
+        
+        Power = float(Psetpoint) 
+        
         print("Vin = {:.3f}".format(vin))
         print("Vout = {:.3f}".format(vout))
         print("Vret = {:.3f}".format(vret))
         print("Duty = {:.0f}".format(pwm_out))
-        print("setpoint = {:.3f}".format(setpoint))
-        print("Psetpoint = {:.3f}".format(Psetpoint))
+        print("setpoint = {:.3f}".format(float(setpoint)))
+        print("Psetpoint = {:.3f}".format(Power))
         count = 0
-                
-        if Psetpoint > 1:
+              
+        if Power > 1:
             setpoint = 1/vout
             
-        elif Psetpoint <= 0:
+        elif Power <= 0:
             setpoint = 0
             
         else:
-            setpoint = Psetpoint/vout
+            setpoint = Power/vout
             
         pid.setpoint = setpoint
-        """sender = threading.Thread(target=myclient, args=('146.169.240.74',5001))
-        sender.daemon=False
-        sender.start()"""
-        sender=myclient('146.169.240.74',5001)
-        sender.senddata(str("pleaseee"))
+        
 sender.close()
         
-

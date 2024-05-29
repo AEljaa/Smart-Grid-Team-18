@@ -45,7 +45,7 @@ class myclient():
                 
         finally:
                 print("Cleaning")
-                GPIO.cleanup()
+                #GPIO.cleanup()
                 #give the server some time
                 time.sleep(1)
 
@@ -56,6 +56,7 @@ class myserver():
         self.host = host
         self.port = port
         self.stop = False
+        self.powerlist=[1,0.5,3,4]
 
         self.mydatain = ""
         self.mydataout = ""
@@ -77,8 +78,14 @@ class myserver():
                 self.mydataout = str(self.mydatain).upper()
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
+                
+                self.mydataout ="2.5"
+                self.conn.send(self.mydataout.encode())
+                print("Sent:", str(self.mydataout))
                 self.conn.close()
                 print("Disconnected:",str(self.addr[0]))
+
+               
                 
             except KeyboardInterrupt:
                 print("Quitting")
@@ -91,4 +98,6 @@ if __name__ == "__main__":
     #and put in the right ip adresses
     #sender = threading.Thread(target=myclient, args=('10.10.1.138',5000), daemon=True).start()
     
-        receiver = threading.Thread(target=myserver, args=('146.169.240.74',5001), daemon=True).start()
+        receiver = threading.Thread(target=myserver, args=('146.169.219.119',5001), daemon=True).start()
+
+        
