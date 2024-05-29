@@ -1,23 +1,23 @@
-# app.py
-from flask import Flask, render_template, jsonify
+from flask import Flask, jsonify
 import requests
 from flask_cors import CORS
 
 def cleanData(data):
-    buyHist=[]
-    demandHist=[]
-    sellHist=[]
-    tick=[]
+    buyHist = []
+    demandHist = []
+    sellHist = []
+    tick = []
     for item in data:
         buyHist.append(item['buy_price'])
         demandHist.append(item['demand'])
         sellHist.append(item['sell_price'])
         tick.append(item["tick"])
     return buyHist, demandHist, sellHist, tick
-app = Flask(__name__)
-CORS(app) #This will prevent the annoyting cors errors we get whenever we access the server
 
-@app.route('/sun', methods=['GET']) #Send Get request to third party server
+app = Flask(__name__)
+CORS(app)  # This will prevent the annoying CORS errors we get whenever we access the server
+
+@app.route('/sun', methods=['GET'])  # Send GET request to third party server
 def get_sun_data():
     try:
         response = requests.get('https://icelec50015.azurewebsites.net/sun')
@@ -26,7 +26,7 @@ def get_sun_data():
     except Exception as e:
         print(f"Error fetching sun data: {e}")
         return jsonify({'error': 'An error occurred while fetching sun data'}), 500
-        #error 500 means internal server error
+
 @app.route('/price', methods=['GET'])
 def get_price_data():
     try:
@@ -46,34 +46,57 @@ def get_demand_data():
     except Exception as e:
         print(f"Error fetching demand data: {e}")
         return jsonify({'error': 'An error occurred while fetching demand data'}), 500
-@app.route('/yesterday',methods=['GET'])
+
+@app.route('/yesterday', methods=['GET'])
 def get_yesterday_data():
     try:
         response = requests.get('https://icelec50015.azurewebsites.net/yesterday')
         yesterday_data = response.json()
-        buyHist, demandHist, sellHist, ticks  = cleanData(yesterday_data)
+        buyHist, demandHist, sellHist, ticks = cleanData(yesterday_data)
         print(buyHist, demandHist, sellHist)
         print(ticks)
         return jsonify({
             'buyHist': buyHist,
             'demandHist': demandHist,
             'sellHist': sellHist,
-            'tick' : ticks
+            'tick': ticks
         })
     except Exception as e:
-        print(f"Error fetching yesterdays data: {e}")
-        return jsonify({'error': 'An error occurred while fetching demand data'}), 500
+        print(f"Error fetching yesterday's data: {e}")
+        return jsonify({'error': 'An error occurred while fetching yesterday data'}), 500
 
-
-@app.route('/deferables',methods=['GET'])
+@app.route('/deferables', methods=['GET'])
 def get_deferables_data():
     try:
         response = requests.get('https://icelec50015.azurewebsites.net/deferables')
         deferable_data = response.json()
-        return(jsonify(deferable_data))
+        return jsonify(deferable_data)
     except Exception as e:
-        print(f"Error fetching yesterdays data: {e}")
-        return jsonify({'error': 'An error occurred while fetching demand data'}), 500
+        print(f"Error fetching deferables data: {e}")
+        return jsonify({'error': 'An error occurred while fetching deferables data'}), 500
+
+@app.route('/algorithm', methods=['GET'])
+def send_algo_data():
+    try:
+        current_response = requests.get('https://icelec50015.azurewebsites.net/price')
+        current_data = current_response.json()
+        current_sell_price = current_data['sell_price']  
+    
+        yesterday_response = requests.get('https://icelec50015.azurewebsites.net/yesterday')
+        yesterday_data = yesterday_response.json()
+        _, _, yesterday_sell_prices, _ = cleanData(yesterday_data)
+
+        demand_response = requests.get('https://icelec50015.azurewebsites.net/demand')
+        demand_data=demand_response.json()
+
+        return jsonify({
+            'current_sell_price': current_sell_price,
+            'yesterday_sell_prices': yesterday_sell_prices,
+            'demand' : demand_data['demand']
+        })
+    except Exception as e:
+        print(f"Error in algorithm: {e}")
+        return jsonify({'error': 'An error occurred while processing algorithm'}), 500
 
 if __name__ == '__main__':
-    app.run(port=4000, debug=True) #api hosted on http://127.0.0.1:4000
+    app.run(port=4000, debug=True)  # API hosted on http://127.0.0.1:4000
