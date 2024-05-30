@@ -82,7 +82,7 @@ class myserver():
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
                 if str(self.mydataout) == "LED1" or str(self.mydataout) == "LED2" or str(self.mydataout) == "LED3" or str(self.mydataout) == "LED4":
-                    self.mydataout = getnewdemanddata()
+                    self.mydataout = helper.return_demand() #Check if this works lol idk (might need to do type correction i think this is a string and we may want to recieve a int)
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
                 self.conn.close()
