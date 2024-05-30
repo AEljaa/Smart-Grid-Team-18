@@ -1,7 +1,16 @@
 import requests
 import json
 
-url="http://127.0.0.1:4000/algorithm" #from our flask api
+url="http://127.0.0.1:4000/helper" #from our flask api
+
+def fetch_latest():
+    source = requests.get(url).json()
+    price=source['current_sell_price']
+    yesterday_list=source['yesterday_sell_prices']
+    demand=source['demand']
+    return price,yesterday_list,demand
+
+
 
 def naive_algorithm(price,yesterday_list):
     if(price < sum(yesterday_list)/len(yesterday_list)):
@@ -9,7 +18,8 @@ def naive_algorithm(price,yesterday_list):
     else:
         print("SELL")
 
-def algorithm(price, yesterday_list, demand): #Sophie's aproach - need to refine within quartiles 2 and 3 (currently do nothing)
+def algorithm(): #Sophie's aproach - need to refine within quartiles 2 and 3 (currently do nothing)
+    price,yesterday_list,demand=fetch_latest()
     yesterday_list.sort()
     instruction=""
     ratio=0
@@ -30,12 +40,10 @@ def algorithm(price, yesterday_list, demand): #Sophie's aproach - need to refine
 
     return json.dumps(value)
 
-def main():
-    source = requests.get(url).json()
-    price=source['current_sell_price']
-    yesterday_list=source['yesterday_sell_prices']
-    demand=source['demand']
-    return algorithm(price,yesterday_list,demand)
+def return_demand():
+    _,_,demand=fetch_latest()
+    return demand
+
 
     
 

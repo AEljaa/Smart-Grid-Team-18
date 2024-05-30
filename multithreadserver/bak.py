@@ -2,9 +2,11 @@
 import time
 import socket
 import threading
-import algo 
+import helper 
        
-#To access Algorithm output call the algo.main() fucntion
+#To access Algorithm output call the helper.main() fucntion and ot get the demand run helper.return_demand()
+
+
 
 class myclient():
 

@@ -75,8 +75,8 @@ def get_deferables_data():
         print(f"Error fetching deferables data: {e}")
         return jsonify({'error': 'An error occurred while fetching deferables data'}), 500
 
-@app.route('/algorithm', methods=['GET'])
-def send_algo_data():
+@app.route('/helper', methods=['GET'])
+def send_helper_data():
     try:
         current_response = requests.get('https://icelec50015.azurewebsites.net/price')
         current_data = current_response.json()
@@ -95,8 +95,8 @@ def send_algo_data():
             'demand' : demand_data['demand']
         })
     except Exception as e:
-        print(f"Error in algorithm: {e}")
-        return jsonify({'error': 'An error occurred while processing algorithm'}), 500
+        print(f"Error in helper: {e}")
+        return jsonify({'error': 'An error occurred while processing helper'}), 500
 
 if __name__ == '__main__':
     app.run(port=4000, debug=True)  # API hosted on http://127.0.0.1:4000
