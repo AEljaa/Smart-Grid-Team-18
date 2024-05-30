@@ -79,7 +79,8 @@ class myserver():
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
                 if str(self.mydataout) == "LED1" or str(self.mydataout) == "LED2" or str(self.mydataout) == "LED3" or str(self.mydataout) == "LED4":
-                    self.mydataout = getnewdemanddata()
+                    #self.mydataout = getnewdemanddata()
+                    print("wiehdhrferhjbfgjerh")
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
                 self.conn.close()
