@@ -2,8 +2,9 @@
 import time
 import socket
 import threading
-
-
+import algo 
+       
+#To access Algorithm output call the algo.main() fucntion
 
 class myclient():
 
