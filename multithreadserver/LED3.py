@@ -132,7 +132,7 @@ for i in range (0,100):
         try:
             sender=myclient('146.169.219.119',5001)
             sender.senddata(str("LED3"))
-        
+            sender.close()
             if Psetpoint != sender.psetpoint:
                 Psetpoint = sender.psetpoint
                 print("Received:",Psetpoint)

@@ -78,8 +78,8 @@ class myserver():
                 self.mydataout = str(self.mydatain).upper()
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
-                
-                self.mydataout ="2.5"
+                if str(self.mydataout) == "LED1" or str(self.mydataout) == "LED2" or str(self.mydataout) == "LED3" or str(self.mydataout) == "LED4":
+                    self.mydataout = getnewdemanddata()
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
                 self.conn.close()
