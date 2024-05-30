@@ -107,8 +107,8 @@ def saturate(duty):
     if duty < 100:
         duty = 100
     return duty
+for i in range (0,100):
 
-while True:
     pwm_en.value(1)
 
     vin = 1.026*(12490/2490)*3.3*(vin_pin.read_u16()/65536) # calibration factor * potential divider ratio * ref voltage * digital reading
