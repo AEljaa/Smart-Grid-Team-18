@@ -2,6 +2,8 @@ from flask import Flask, jsonify
 import requests
 from flask_cors import CORS
 
+last_three_sell_prices = []
+
 def cleanData(data):
     buyHist = []
     demandHist = []
@@ -16,6 +18,12 @@ def cleanData(data):
 
 app = Flask(__name__)
 CORS(app)  # This will prevent the annoying CORS errors we get whenever we access the server
+
+def update_lag_array(new_price):
+    global last_three_sell_prices 
+    if (len(last_three_sell_prices)>=3):
+        last_three_sell_prices.pop(0)
+    last_three_sell_prices.append(new_price)
 
 @app.route('/sun', methods=['GET'])  
 def get_sun_data():
@@ -89,10 +97,18 @@ def send_helper_data():
         demand_response = requests.get('https://icelec50015.azurewebsites.net/demand')
         demand_data=demand_response.json()
 
+        update_lag_array(current_sell_price)
+
+        # Ensure we have at least three values
+        if len(last_three_sell_prices) < 3:
+            return jsonify({'error': 'Not enough data for lag values'}), 500
+
+
         return jsonify({
             'current_sell_price': current_sell_price,
             'yesterday_sell_prices': yesterday_sell_prices,
-            'demand' : demand_data['demand']
+            'demand' : demand_data['demand'],
+            'lags' : last_three_sell_prices
         })
     except Exception as e:
         print(f"Error in helper: {e}")
