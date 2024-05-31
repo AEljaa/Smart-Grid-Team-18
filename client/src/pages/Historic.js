@@ -36,14 +36,14 @@ export default function Historic() {
           labels: labels,
           datasets: [
             {
-              label: 'External Buy Price Per Watt (pence)',
+              label: 'External Buy Price Per Joule (pence)',
               data: yesterdayData.buyHist,
               fill: true,
               backgroundColor: 'rgba(75,192,192,0.4)',
               borderColor: 'rgba(75,192,192,1)',
             },
             {
-              label: 'External Sell Price Per Watt (pence)',
+              label: 'External Sell Price Per Joule (pence)',
               data: yesterdayData.sellHist,
               fill: true,
               backgroundColor: 'rgba(153,102,255,0.4)',

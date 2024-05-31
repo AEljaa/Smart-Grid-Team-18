@@ -43,18 +43,18 @@ export default function Home() {
           <div className="scroll-container">
             <div className="text-box">
               <h2 className="text-label">Sun Irradiance</h2>
-              <p className="text-value">{sunIntensity}W/m²</p>
+              <p className="text-value">{sunIntensity}%</p>
             </div>
             <div className="text-box">
               <h2 className="text-label">Instantaneous Demand</h2>
-              <p className="text-value">{demand.toFixed(3)}W</p>
+              <p className="text-value">{demand.toFixed(3)}J</p>
             </div>            
             <div className="text-box">
-              <h2 className="text-label">External Sell Price Per Watt</h2>
+              <h2 className="text-label">External Sell Price Per Joule</h2>
               <p className="text-value">£{(sellPrice/100).toFixed(2)}</p>
             </div>
             <div className="text-box">
-              <h2 className="text-label">External Buy Price Per Watt</h2>
+              <h2 className="text-label">External Buy Price Per Joule</h2>
               <p className="text-value">£{(buyPrice/100).toFixed(2)}</p>
             </div>
             <div className="text-box">
