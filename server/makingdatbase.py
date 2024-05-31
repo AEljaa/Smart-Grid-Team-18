@@ -1,6 +1,9 @@
 import sqlite3
 from datetime import date, timedelta
+
+from werkzeug.wrappers import response
 from flaskBackendServer import *
+import requests
 def creation():
     #connect to it
     db = sqlite3.connect("SPdatabase.db")
@@ -149,8 +152,13 @@ def loadinhistory(buyHist, demandHist, sellHist, tick):
 if __name__ == "__main__":
     with app.app_context():
         creation()
-        buyHist, demandHist, sellHist, tick = cleanData(get_yesterday_data())
-        loadinhistory(buyHist, demandHist, sellHist, tick)
+        response=requests.get('http://127.0.0.1:4000/yesterday')
+        source = response.json()
+        buyHist=source['buyHist'] # All the data is in an array buyHist': [25, 36, ... 67]  
+        demandHist = source['demandHist'] #'demandHist': [1.328954925125954, 2.448937679208359 ... 1.0340372817850136],
+        sellHist = source['sellHist'] #'sellHist': [51, 73,... 49],
+        ticks = source['tick'] # 'tick': [0, 1, 2 ... 59]
+        loadinhistory(buyHist, demandHist, sellHist, ticks)
     #data from dataserver goes into new input data
     #this goes through the algorithm and the ouptus go to output table
 

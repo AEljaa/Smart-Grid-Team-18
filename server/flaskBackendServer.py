@@ -17,10 +17,10 @@ def cleanData(data):
 app = Flask(__name__)
 CORS(app)  # This will prevent the annoying CORS errors we get whenever we access the server
 
-@app.route('/sun', methods=['GET'])  # Send GET request to third party server
+@app.route('/sun', methods=['GET'])  
 def get_sun_data():
     try:
-        response = requests.get('https://icelec50015.azurewebsites.net/sun')
+        response = requests.get('https://icelec50015.azurewebsites.net/sun') # Send GET request to third party server
         sun_data = response.json()
         return jsonify(sun_data)
     except Exception as e:
