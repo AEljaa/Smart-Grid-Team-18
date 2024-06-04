@@ -8,5 +8,5 @@ run command `npm start`
 
 ## To start Flask Web server (flaskBackendServer.py server)
 cd into server folder
-run `pip install -r requirements.txt`
+run `pip install Flask flask-cors requests`
 run command `python3 flaskBackendServer.py`
