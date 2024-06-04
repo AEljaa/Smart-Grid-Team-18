@@ -75,21 +75,31 @@ class myserver():
                 self.mySocket.listen(1)
                 self.conn, self.addr = self.mySocket.accept()
                 print("Connection from:", str(self.addr[0]))
-                
                 self.mydatain = self.conn.recv(1024).decode()
                 print("Received:", str(self.mydatain))
                 self.mydataout = str(self.mydatain).upper()
                 self.conn.send(self.mydataout.encode())
                 print("Sent:", str(self.mydataout))
                 if str(self.mydataout) == "LED1" or str(self.mydataout) == "LED2" or str(self.mydataout) == "LED3" or str(self.mydataout) == "LED4":
-<<<<<<< HEAD
-                    #self.mydataout = getnewdemanddata()
-                    print("wiehdhrferhjbfgjerh")
-=======
                     self.mydataout = helper.return_demand() #Check if this works lol idk (might need to do type correction i think this is a string and we may want to recieve a int)
->>>>>>> e54f54337d85a7c068e14e4b047641d1c625f3e7
-                self.conn.send(self.mydataout.encode())
-                print("Sent:", str(self.mydataout))
+                    self.conn.send(self.mydataout.encode())
+                    print("Sent:", str(self.mydataout))
+                elif str(self.mydataout) == "Grid":
+                     print("hit the griddy")
+                elif str(self.mydataout) == "Storage":
+                     #send charge amount
+                     self.mydataout = ##AMOUNT TO STORE
+                     self.conn.send(self.mydataout.encode())
+                     self.mydataout = #AMOUNT TO SELL
+                     self.conn.send(self.mydataout.encode())
+                     
+                     #recieve if full
+                     self.mydatain = self.conn.recv(1024).decode()
+                     self.mydatain = #WHERE EVER INFO OF HOW FULL STPRAGE IS
+                else:
+                     self.mydataout=str("sorry, you are not recognizes")
+                     self.conn.send(self.mydataout.encode())
+                     print("Sent:", str(self.mydataout))
                 self.conn.close()
                 print("Disconnected:",str(self.addr[0]))
 

@@ -17,15 +17,15 @@ def creation():
     Demand REAL NOT NULL,
     SellPrice INTEGER NOT NULL,
     PRIMARY KEY (Date,Tick));
+                   
     """)
     
     cursor.execute(""" CREATE TABLE IF NOT EXISTS Action_table (
     Date VARCHAR(20) NOT NULL,
     Tick INTEGER NOT NULL,
-    Met VARCHAR(1) NOT NULL,
-    bySolar VARCHAR(1),
-    byStored VARCHAR(1),
-    byBought VARCHAR(1),
+    CurrentSolar INTEGER NOT NULL,
+    CurrentStored INTEGER NOT NULL,
+    CurrentBought INTEGER NOT NULL,
     ChangeinMoney INTEGER NOT NULL,
     FOREIGN KEY (Date) REFERENCES History_table(Date) ON DELETE CASCADE,
     FOREIGN KEY (Tick) REFERENCES History_table(Tick) ON DELETE CASCADE
