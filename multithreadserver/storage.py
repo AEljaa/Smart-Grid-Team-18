@@ -123,8 +123,7 @@ class myclient():
         self.stop = False
         self.mydataout = ""
         self.mydatain = ""
-        self.Chargeamount=0
-        self.Discharamount=0
+        self.info=""
         try: 
             #while not self.stop:
                 print("Connecting to",self.host,self.port)
@@ -157,10 +156,7 @@ class myclient():
             ##extra reciver
             self.mydatain = self.mySocket.recv(1024).decode()
             print("Received:",self.mydatain)
-            self.Chargeamount=self.mydatain
-            self.mydatain = self.mySocket.recv(1024).decode()
-            print("Received:",self.mydatain)
-            self.Discharamount=self.mydatain
+            self.info=self.mydatain
             self.mydataout=charge
             self.mySocket.send(self.mydataout.encode())
            
@@ -273,8 +269,7 @@ while True:
         sender=myclient('146.169.219.119',5001)
         sender.senddata(str("Storage"), str(CEnergy))
         sender.close()
-        Cmode=sender.Chargeamount
-        DMode=sender.Discharamount
+        
         if CMode ==1 & DMode ==0:
             duty = 60000
         if DMode == 1 & CMode ==0:

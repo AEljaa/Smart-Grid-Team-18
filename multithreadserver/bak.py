@@ -3,7 +3,7 @@ import time
 import socket
 import threading
 import helper 
-       
+import json     
 #To access Algorithm output call the helper.main() fucntion and ot get the demand run helper.return_demand()
 
 
@@ -86,13 +86,18 @@ class myserver():
                     print("Sent:", str(self.mydataout))
                 elif str(self.mydataout) == "Grid":
                      print("hit the griddy")
+                     algoout=helper.main()
+                     self.mydataout=json.loads(algoout)
+                     self.conn.send(self.mydataout.encode())
+                     print("Sent:", str(self.mydataout))
+
+
                 elif str(self.mydataout) == "Storage":
                      #send charge amount
-                     self.mydataout = ##AMOUNT TO STORE
+                     algoout=helper.main()
+                     self.mydataout=json.loads(algoout)
                      self.conn.send(self.mydataout.encode())
-                     self.mydataout = #AMOUNT TO SELL
-                     self.conn.send(self.mydataout.encode())
-                     
+                     print("Sent:", str(self.mydataout))
                      #recieve if full
                      self.mydatain = self.conn.recv(1024).decode()
                      self.mydatain = #WHERE EVER INFO OF HOW FULL STPRAGE IS
