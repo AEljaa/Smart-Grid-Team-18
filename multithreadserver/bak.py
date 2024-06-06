@@ -60,9 +60,10 @@ class myserver():
         self.port = port
         self.stop = False
         self.powerlist=[1,0.5,3,4]
-
+        self.currentengmade=0
         self.mydatain = ""
         self.mydataout = ""
+        
     
         print("Creating server...")
         self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -90,17 +91,32 @@ class myserver():
                      self.mydataout=json.loads(algoout)
                      self.conn.send(self.mydataout.encode())
                      print("Sent:", str(self.mydataout))
+                     self.mydataout = helper.return_demand() #Check if this works lol idk (might need to do type correction i think this is a string and we may want to recieve a int)
+                     self.conn.send(self.mydataout.encode())
+                     print("Sent:", str(self.mydataout))
 
 
                 elif str(self.mydataout) == "Storage":
-                     #send charge amount
+                     #samount stored = pv+buy - load - sell
+                     #id -ve then sayikng to discharge
                      algoout=helper.main()
-                     self.mydataout=json.loads(algoout)
+                     algoout_parsed=json.loads(algoout)
+                     instruction = algoout_parsed.get("instruction")
+                     ratio = algoout_parsed.get("ratio")
+                     demand=helper.return_demand()
+                     if instruction == "BUY":
+                          amount=ratio*demand
+                     else:
+                          amount= ratio*demand*-1
+                    
+                     self.mydataout=self.currentengmade+amount-demand
                      self.conn.send(self.mydataout.encode())
                      print("Sent:", str(self.mydataout))
                      #recieve if full
                      self.mydatain = self.conn.recv(1024).decode()
                      self.mydatain = #WHERE EVER INFO OF HOW FULL STPRAGE IS
+                elif self.mydatain =="PV":
+                     self.currentengmade= self.conn.recv(1024).decode()
                 else:
                      self.mydataout=str("sorry, you are not recognizes")
                      self.conn.send(self.mydataout.encode())
