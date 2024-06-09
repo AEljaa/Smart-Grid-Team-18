@@ -89,6 +89,7 @@ def send_helper_data():
         current_response = requests.get('https://icelec50015.azurewebsites.net/price')
         current_data = current_response.json()
         current_sell_price = current_data['sell_price']  
+        tick= current_data['tick']
     
         yesterday_response = requests.get('https://icelec50015.azurewebsites.net/yesterday')
         yesterday_data = yesterday_response.json()
@@ -108,7 +109,8 @@ def send_helper_data():
             'current_sell_price': current_sell_price,
             'yesterday_sell_prices': yesterday_sell_prices,
             'demand' : demand_data['demand'],
-            'lags' : last_three_sell_prices
+            'lags' : last_three_sell_prices,
+            'tick': tick
         })
     except Exception as e:
         print(f"Error in helper: {e}")
