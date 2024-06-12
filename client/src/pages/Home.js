@@ -8,7 +8,19 @@ export default function Home() {
   const [buyPrice, setBuyPrice] = useState(0);
   const [sellPrice, setSellPrice] = useState(0);
   const [demand, setDemand] = useState(0);
+  const [GeneratedPow,setGen] = useState(0);
+  const [StoredPow,setStor] = useState(0);
 
+  const socket = new WebSocket('ws://localhost:8000');
+  socket.addEventListener('open', function (event) {
+    socket.send('Connection Established'); 
+  });
+
+  socket.addEventListener('message', function (event) {
+      const data = JSON.parse(event.data)
+      setGen(data.Generated)
+      setStor(data.Stored)
+  });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -59,11 +71,11 @@ export default function Home() {
             </div>
             <div className="text-box">
               <h2 className="text-label">Generated Solar Power</h2>
-              <p className="text-value">{100}W</p>
+              <p className="text-value">{GeneratedPow}W</p>
             </div>
             <div className="text-box">
               <h2 className="text-label">Stored Power</h2>
-              <p className="text-value">{23}W</p>
+              <p className="text-value">{StoredPow}W</p>
             </div>
           </div>
         </div>
