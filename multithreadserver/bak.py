@@ -113,8 +113,7 @@ class myserver():
                      self.conn.send(self.mydataout.encode())
                      print("Sent:", str(self.mydataout))
                      #recieve if full
-                     self.mydatain = self.conn.recv(1024).decode()
-                     self.mydatain = #WHERE EVER INFO OF HOW FULL STPRAGE IS
+                    
                 elif self.mydatain =="PV":
                      self.currentengmade= self.conn.recv(1024).decode()
                 else:
@@ -137,6 +136,6 @@ if __name__ == "__main__":
     #and put in the right ip adresses
     #sender = threading.Thread(target=myclient, args=('10.10.1.138',5000), daemon=True).start()
     
-        receiver = threading.Thread(target=myserver, args=('146.169.219.119',5001), daemon=True).start()
-
+        #receiver = threading.Thread(target=myserver, args=('146.169.253.108z',5001), daemon=True).start()
+        reciever=myserver('0.0.0.0',5001)
         
