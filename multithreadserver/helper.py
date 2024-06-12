@@ -36,6 +36,7 @@ def algorithm(): #Sophie's aproach - need to refine within quartiles 2 and 3 (cu
     print(test_list)
     decr=0
     incr=0
+    ratio=1+return_demand()/4
     res=""
     decr = np.array_equal(test_list, sorted(test_list, reverse=True))
     incr = all(i < j for i, j in zip(predicted_prices[0], predicted_prices[0][1:]))#https://www.geeksforgeeks.org/python-check-if-list-is-strictly-increasing/  if pred array increases the nprice trending up, buy
@@ -43,7 +44,12 @@ def algorithm(): #Sophie's aproach - need to refine within quartiles 2 and 3 (cu
         res="SELL"
     if incr:
         res="BUY"
-    print("Instr: ",res, predicted_prices)
+    value= {
+        "instruction" : res,
+        "ratio" : ratio
+    }
+    return value
+
 
 
 
