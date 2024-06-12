@@ -119,11 +119,11 @@ def send_helper_data():
 def receive_data():
     global grid_data
     try:
-        received_data = request.json  # Assuming data is sent as JSON
+        received_data = request.json  # Data is sent in json format so got to handle
         print('Received data:', received_data)
-        # Process received data here as needed
+       
         grid_data = received_data
-        # Example: Respond with a success message
+
         return jsonify({'message': 'Data received successfully'}), 200
     except Exception as e:
         print(f"Error processing received data: {e}")
