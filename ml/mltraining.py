@@ -55,12 +55,21 @@ horizons = [2, 5, 10, 15, 30, 60]
 new_pred = []
 
 for horizon in horizons:
-    rolling_avg = df["sellHist"].rolling(horizon).mean()
     ratio_col = f"SellHist_ratio_{horizon}"
+    rolling_avg = df["sellHist"].rolling(horizon).mean()
     df[ratio_col] = df["sellHist"] / rolling_avg
+
     trend_col = f"Trend_Sell{horizon}"
     df[trend_col] = df["sellHist"].shift(1).rolling(horizon).sum()
-    new_pred += [ratio_col, trend_col]
+
+    first_deriv_col=f'first_deriv_{horizon}'
+    df[first_deriv_col]=df["sellHist"].diff().rolling(horizon).mean()
+    
+    sec_deriv_col=f'sec_deriv_{horizon}'
+    df[sec_deriv_col]=df[first_deriv_col].diff().rolling(horizon).mean()
+    
+
+    new_pred += [ratio_col, trend_col,first_deriv_col,sec_deriv_col]
 
 df.dropna(inplace=True)
 
@@ -68,8 +77,9 @@ x = df[["demandHist", "tick"] + lagnames + new_pred]
 y = df[["sellHist"] + futnames]
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
-
-
+concat_df=pd.concat([x,y],axis=1)
+print(concat_df.corr())
+concat_df.corr().to_csv("concat.csv")
 # Random Forest Regression
 regressor = RandomForestRegressor(min_samples_split=100)
 
@@ -79,4 +89,4 @@ while regressor.score(x,y)<0.665:
     print(regressor.score(x,y))
 #    df.to_csv("df.csv")
 # Save the trained regressor model
-joblib.dump(regressor,"randforreg100minsplit3lag2futnewpreds066.pkl")
+#joblib.dump(regressor,"randforreg100minsplit3lag2futnewpreds066.pkl")
