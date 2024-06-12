@@ -1,15 +1,26 @@
 import requests
 import json
-
+import pandas as pd
+import numpy as np
+import joblib
 url="http://127.0.0.1:4000/helper" #from our flask api
-
+model=joblib.load("ml.pkl")#load ml model
+wallet=0
 def fetch_latest():
     source = requests.get(url).json()
-    price=source['current_sell_price']
-    yesterday_list=source['yesterday_sell_prices']
-    demand=source['demand']
-    return price,yesterday_list,demand
-
+    lags = source["lags"]
+    price = source['current_sell_price']
+    demand = source['demand']
+    tick = source['tick']
+    inputData = pd.DataFrame(
+        {
+            "demandHist": demand,
+            "tick": tick,
+            "Lag_1": lags[-1],
+            "Lag_2": lags[-2],
+            "Lag_3": lags[-3]
+        }, index=[0])
+    return inputData, price, tick, lags,demand
 
 
 def naive_algorithm(price,yesterday_list):
@@ -19,34 +30,31 @@ def naive_algorithm(price,yesterday_list):
         print("SELL")
 
 def algorithm(): #Sophie's aproach - need to refine within quartiles 2 and 3 (currently do nothing)
-    price,yesterday_list,demand=fetch_latest()
-    yesterday_list.sort()
-    instruction=""
-    ratio=0
-    q3_index = int(0.75 * len(yesterday_list))  # Convert float index to integer
-    q3 = yesterday_list[q3_index]
-    q1_index = len(yesterday_list) // 4
-    q1 = yesterday_list[q1_index]
-    if price < q1:
-        instruction="BUY"
-        ratio=1+demand/4
-    elif price >q3:
-        instruction="SELL"
-        ratio=1+demand/4
-    value= {
-        "instruction" : instruction,
-        "ratio" : ratio
-    }
+    input,_,_,_,_=fetch_latest()
+    predicted_prices=model.predict(input)
+    test_list=predicted_prices[0]
+    print(test_list)
+    decr=0
+    incr=0
+    res=""
+    decr = np.array_equal(test_list, sorted(test_list, reverse=True))
+    incr = all(i < j for i, j in zip(predicted_prices[0], predicted_prices[0][1:]))#https://www.geeksforgeeks.org/python-check-if-list-is-strictly-increasing/  if pred array increases the nprice trending up, buy
+    if(decr):
+        res="SELL"
+    if incr:
+        res="BUY"
+    print("Instr: ",res, predicted_prices)
 
-    return json.dumps(value)
+
 
 def return_demand():
-    _,_,demand=fetch_latest()
+    _,_,_,_,demand=fetch_latest()
     return demand
 
 
     
-
+if __name__ == "__main__":
+    algorithm()
 
 
 
