@@ -134,11 +134,11 @@ class myserver():
 
         self.mySocket.close()
 ##call this fucntion to send data ot the website using webockets for now
-def sendtowebsite(): 
+def sendtowebsite(gen,stored): # the values from the grid to send to web
     async def handler(websocket, path):
         data={
-            "Generated" : "lolGen",
-            "Stored" : "lolstored"
+            "Generated" : gen,
+            "Stored" : stored
                 }
         sendjson=json.dumps(data)
         await websocket.send(sendjson)
