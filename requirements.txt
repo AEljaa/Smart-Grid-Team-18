@@ -1,4 +1,5 @@
 pandas
+websockets
 scikit-learn
 numpy
 flask-cors

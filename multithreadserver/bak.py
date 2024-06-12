@@ -4,6 +4,9 @@ import socket
 import threading
 import helper 
 import json     
+import asyncio
+import websockets
+a
 #To access Algorithm output call the helper.main() fucntion and ot get the demand run helper.return_demand()
 
 
@@ -130,7 +133,16 @@ class myserver():
                 stop = True
 
         self.mySocket.close()
- 
+##call this fucntion to send data ot the website using webockets for now
+def sendtowebsite(): 
+    async def handler(websocket, path):
+        data={
+            "Generated" : "lolGen",
+            "Stored" : "lolstored"
+                }
+        sendjson=json.dumps(data)
+        await websocket.send(sendjson)
+
 if __name__ == "__main__":
     #we just need to comment out which one we want it to run 
     #and put in the right ip adresses
@@ -138,4 +150,8 @@ if __name__ == "__main__":
     
         #receiver = threading.Thread(target=myserver, args=('146.169.253.108z',5001), daemon=True).start()
         reciever=myserver('0.0.0.0',5001)
-        
+        #Communication from data server to backend webserver
+        #may need help to get this threaded
+        start_server = websockets.serve(handler, "localhost", 8000)
+        asyncio.get_event_loop().run_until_complete(start_server)
+        asyncio.get_event_loop().run_forever()        
