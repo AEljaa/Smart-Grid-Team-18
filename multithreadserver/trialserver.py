@@ -11,7 +11,7 @@ class MyServer:
         self.port = port
         self.stop = False
         self.powerlist = [1, 0.5, 3, 4]
-        self.currentengmade = 0
+        self.currentengmade = 2
         self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.mySocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.mySocket.bind((self.host, self.port))
@@ -34,7 +34,6 @@ class MyServer:
                     conn.send(self.mydataout.encode())
                     print("Sent:", str(self.mydataout))
                 elif self.mydatain == "Grid":
-                    print("hit the griddy")
                     algoout = helper.main()
                     self.mydataout = json.dumps(algoout)
                     conn.send(self.mydataout.encode())
