@@ -1,9 +1,9 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify , request
 import requests
 from flask_cors import CORS
 
 last_three_sell_prices = []
-
+grid_data={}
 def cleanData(data):
     buyHist = []
     demandHist = []
@@ -115,6 +115,33 @@ def send_helper_data():
     except Exception as e:
         print(f"Error in helper: {e}")
         return jsonify({'error': 'An error occurred while processing helper'}), 500
+@app.route('/send_data', methods=['POST'])
+def receive_data():
+    global grid_data
+    try:
+        received_data = request.json  # Assuming data is sent as JSON
+        print('Received data:', received_data)
+        # Process received data here as needed
+        grid_data = received_data
+        # Example: Respond with a success message
+        return jsonify({'message': 'Data received successfully'}), 200
+    except Exception as e:
+        print(f"Error processing received data: {e}")
+        return jsonify({'error': 'An error occurred while processing data'}), 500
+
+@app.route('/forward_data', methods=['GET'])
+def forward_data():
+    try:
+        # Check if data is stored
+        print(grid_data)
+        if grid_data:
+            print(grid_data)
+            return jsonify(grid_data), 200
+        else:
+            return jsonify({'message': 'No data available'}), 404
+    except Exception as e:
+        print(f"Error forwarding data: {e}")
+        return jsonify({'error': 'An error occurred while forwarding data'}), 500
 
 if __name__ == '__main__':
     app.run(port=4000, debug=True)  # API hosted on http://127.0.0.1:4000
