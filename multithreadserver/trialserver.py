@@ -17,7 +17,7 @@ class MyServer:
         self.mySocket.bind((self.host, self.port))
         print("Creating server...")
 
-    def handle_client(self, conn, addr):
+    def handle_client(self, conn, addr): ### Whyyy so many self.var, just do var. Why so many str()?
         try:
             print("Connection from:", str(addr))
             while True:
@@ -26,17 +26,17 @@ class MyServer:
                     break
                 print("Received:", str(self.mydatain))
                 self.mydataout = str(self.mydatain).upper()
-                conn.send(self.mydataout.encode())
+                conn.send(self.mydataout.encode()) ## ??? Try to make send/receive ping-pong. send-receive-send-receive, this is redundant send which can complicate a subsequent send
                 print("Sent:", str(self.mydataout))
 
                 if self.mydatain in ["LED1", "LED2", "LED3", "LED4"]:
-                    self.mydataout = str(helper.return_demand()+",")
+                    self.mydataout = str(helper.return_demand()) ## Comma??
                     conn.send(self.mydataout.encode())
                     print("Sent:", str(self.mydataout))
                 elif self.mydatain == "Grid":
                     algoout = helper.main()
                     self.mydataout = json.dumps(algoout)
-                    conn.send(self.mydataout.encode())
+                    conn.send(self.mydataout.encode()) ## Comma?
                     print("Sent:", str(self.mydataout))
                     self.mydataout = str(helper.return_demand())
                     conn.send(self.mydataout.encode())
@@ -55,7 +55,8 @@ class MyServer:
                     conn.send(self.mydataout.encode())
                     print("Sent:", str(self.mydataout))
                 elif self.mydatain == "PV":
-                    self.currentengmade = float(conn.recv(1024).decode())
+                    
+                    
                 else:
                     self.mydataout = "sorry, you are not recognized"
                     conn.send(self.mydataout.encode())
