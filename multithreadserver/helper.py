@@ -8,7 +8,7 @@ model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithr
 #load ml model
 wallet=0
 
-"""
+
 def fetch_latest():
     source = requests.get(url).json()
     lags = source["lags"]
@@ -37,7 +37,6 @@ def algorithm(MaxAmount):
     input,_,_,_,_,_=fetch_latest()
     predicted_prices=model.predict(input)
     test_list=predicted_prices[0]
-    print(test_list)
     decr=0
     incr=0
     ratio=return_demand()/5
@@ -48,11 +47,7 @@ def algorithm(MaxAmount):
         res=MaxAmount*ratio*-1
     if incr:
         res=MaxAmount*ratio
-    value= {
-        "instruction" : res,
-        "ratio" : ratio
-    }
-    return value
+    return res
 
 
 def return_irradiance():
@@ -62,10 +57,29 @@ def return_irradiance():
 
 def return_demand():
     _,_,_,_,demand,_=fetch_latest()
+    leftforfefferable=4-demand
+
+
     return demand
 
 
+def deferablehell(Tick, freepower,derablelist,demand ):
+    ratiolist=[]
+    for deferable in derablelist:
+        if deferable[2]<= Tick:
+            ratiolist.append(deferable[1] / (deferable[0]-deferable[2]))
+    max=0
+    postion=0
+    for i in range (0, len(ratiolist)):
+        if ratiolist[i]>= max:
+            postion=i
     
-
-
-"""
+    
+    if derablelist[postion][1]-5*freepower >=0: 
+        derablelist[postion][1]=derablelist[postion][1]-5*freepower
+        return 4
+    else:
+        derablelist[postion][1]=derablelist[postion][1]-5*freepower
+        return (derablelist[postion][1]/5)+demand
+        
+ 

@@ -3,11 +3,25 @@ import socket
 import threading
 import helper
 import json
+import requests
+def send_data_to_flask(data):
+    try:
+        url = 'http://localhost:4000/send_data'  
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200:
+            print('Data sent successfully to Flask backend')
+        else:
+            print(f'Failed to send data. Status code: {response.status_code}')
+    except Exception as e:
+        print(f"Error sending data to Flask backend: {e}")
 
 class MyServer:
 
     def __init__(self, host, port):
         self.host = host
+        self.powerimported=0
+        self.poweroutported=0
         self.port = port
         self.stop = False
         self.powerlist = [1, 0.5, 3, 4]
@@ -30,33 +44,31 @@ class MyServer:
                 print("Sent:", str(self.mydataout))
 
                 if self.mydatain in ["LED1", "LED2", "LED3", "LED4"]:
-                    self.mydataout = str(helper.return_demand()) ## Comma??
+                    currentdemand= str(helper.return_demand())
+                    playroom=4-currentdemand 
+                    self.mydataout=helper.deferablehell(,playroom,,helper.return_demand())#tick, deferable list need added
                     conn.send(self.mydataout.encode())
                     print("Sent:", str(self.mydataout))
                 elif self.mydatain == "Grid":
-                    algoout = helper.main()
-                    self.mydataout = json.dumps(algoout)
-                    conn.send(self.mydataout.encode()) ## Comma?
-                    print("Sent:", str(self.mydataout))
-                    self.mydataout = str(helper.return_demand())
-                    conn.send(self.mydataout.encode())
-                    print("Sent:", str(self.mydataout))
+                    self.mydatain = conn.recv(1024).decode()
+                    #FIND WHAT MEAN KIN MONEY TERMS AND GO ON WEB
+                    send_data_to_flask(self.mydatain)
                 elif self.mydatain == "Storage":
-                    algoout = helper.main()
-                    algoout_parsed = json.loads(algoout)
-                    instruction = algoout_parsed.get("instruction")
-                    ratio = algoout_parsed.get("ratio")
-                    demand = helper.return_demand()
-                    if instruction == "BUY":
-                        amount = ratio * demand
+                    self.mydatain = conn.recv(1024).decode()
+                    print("Received:", str(self.mydatain))
+                    if self.mydatain!="0": #if we have no enge
+                        algoout=helper.algorithm(46- float(self.mydatain))
+                        self.mydataout=str(algoout)
+                        conn.send(self.mydataout.encode())
+                        print("Sent:", str(self.mydataout))
                     else:
-                        amount = ratio * demand * -1
-                    self.mydataout = str(self.currentengmade + amount - demand)
-                    conn.send(self.mydataout.encode())
-                    print("Sent:", str(self.mydataout))
+                        self.mydataout=str(0)
+                        conn.send(self.mydataout.encode())
+                        print("Sent:", str(self.mydataout))
                 elif self.mydatain == "PV":
                     self.currentengmade = float(conn.recv(1024).decode())
-                    self.mydataout = helper.return_irradiance()
+                    print(self.currentengmade)
+                    self.mydataout = str(helper.return_irradiance())
                     conn.send(self.mydataout.encode())
                     print("Sent:", str(self.mydataout))
 
