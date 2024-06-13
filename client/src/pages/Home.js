@@ -10,17 +10,6 @@ export default function Home() {
   const [demand, setDemand] = useState(0);
   const [GeneratedPow,setGen] = useState(0);
   const [StoredPow,setStor] = useState(0);
-
-  const socket = new WebSocket('ws://localhost:8000');
-  socket.addEventListener('open', function (event) {
-    socket.send('Connection Established'); 
-  });
-
-  socket.addEventListener('message', function (event) {
-      const data = JSON.parse(event.data)
-      setGen(data.Generated)
-      setStor(data.Stored)
-  });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,6 +25,12 @@ export default function Home() {
         response = await fetch("http://127.0.0.1:4000/demand");
         let demandData = await response.json();
         setDemand(demandData.demand);
+        
+        response = await fetch("http://127.0.0.1:4000/forward_data")
+        let gridData = await response.json()
+        setGen(gridData.Generated)
+        setStor(gridData.Stored)
+
       } catch (error) {
         console.error(error);
       }
@@ -45,7 +40,6 @@ export default function Home() {
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, []);
-
   return (
     <div className="container">
       <NavBar />

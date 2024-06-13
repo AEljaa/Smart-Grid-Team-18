@@ -3,7 +3,7 @@ import socket
 import threading
 import helper
 import json
-
+import requests
 class MyServer:
 
     def __init__(self, host, port):
@@ -83,12 +83,30 @@ class MyServer:
                 print("Error:", e)
 
         self.mySocket.close()
+#Send Grud data to flask endpoint flask then sends to our website
+def send_data_to_flask(data):
+    try:
+        url = 'http://localhost:4000/send_data'  
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200:
+            print('Data sent successfully to Flask backend')
+        else:
+            print(f'Failed to send data. Status code: {response.status_code}')
+    except Exception as e:
+        print(f"Error sending data to Flask backend: {e}")
 
 if __name__ == "__main__":
     server = MyServer('0.0.0.0', 5001)
     server_thread = threading.Thread(target=server.start, daemon=True)
     server_thread.start()
-
+  #  data={
+  #      "Generated" : 100,
+  #      "Stored" : 33
+  #          }
+  #  
+  #  send_data_to_flask(data)
+  #  
     # Keep the main thread running to catch keyboard interrupts
     try:
         while True:
