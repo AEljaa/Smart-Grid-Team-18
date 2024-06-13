@@ -52,8 +52,8 @@ export default function Home() {
               <p className="text-value">{sunIntensity}%</p>
             </div>
             <div className="text-box">
-              <h2 className="text-label">Instantaneous Demand</h2>
-              <p className="text-value">{demand.toFixed(3)}J</p>
+              <h2 className="text-label">Instantaneous Demand </h2>
+              <p className="text-value">{demand.toFixed(3)}W</p>
             </div>            
             <div className="text-box">
               <h2 className="text-label">External Sell Price Per Joule</h2>

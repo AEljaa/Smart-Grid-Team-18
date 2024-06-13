@@ -12,6 +12,7 @@ def fetch_latest():
     price = source['current_sell_price']
     demand = source['demand']
     tick = source['tick']
+    irradiance = source ["sun"]
     inputData = pd.DataFrame(
         {
             "demandHist": demand,
@@ -20,7 +21,7 @@ def fetch_latest():
             "Lag_2": lags[-2],
             "Lag_3": lags[-3]
         }, index=[0])
-    return inputData, price, tick, lags,demand
+    return inputData, price, tick, lags,demand,irradiance
 
 
 def naive_algorithm(price,yesterday_list):
@@ -29,21 +30,21 @@ def naive_algorithm(price,yesterday_list):
     else:
         print("SELL")
 
-def algorithm(): #Sophie's aproach - need to refine within quartiles 2 and 3 (currently do nothing)
-    input,_,_,_,_=fetch_latest()
+def algorithm(MaxAmount):    
+    input,_,_,_,_,_=fetch_latest()
     predicted_prices=model.predict(input)
     test_list=predicted_prices[0]
     print(test_list)
     decr=0
     incr=0
-    ratio=1+return_demand()/4
-    res=""
+    ratio=return_demand()/5
+    res=0
     decr = np.array_equal(test_list, sorted(test_list, reverse=True))
     incr = all(i < j for i, j in zip(predicted_prices[0], predicted_prices[0][1:]))#https://www.geeksforgeeks.org/python-check-if-list-is-strictly-increasing/  if pred array increases the nprice trending up, buy
     if(decr):
-        res="SELL"
+        res=MaxAmount*ratio*-1
     if incr:
-        res="BUY"
+        res=MaxAmount*ratio
     value= {
         "instruction" : res,
         "ratio" : ratio
@@ -51,10 +52,13 @@ def algorithm(): #Sophie's aproach - need to refine within quartiles 2 and 3 (cu
     return value
 
 
+def return_irradiance():
+    _,_,_,_,_,irradiance = fetch_latest()
+    return irradiance
 
 
 def return_demand():
-    _,_,_,_,demand=fetch_latest()
+    _,_,_,_,demand,_=fetch_latest()
     return demand
 
 

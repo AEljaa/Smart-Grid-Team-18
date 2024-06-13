@@ -98,6 +98,9 @@ def send_helper_data():
         demand_response = requests.get('https://icelec50015.azurewebsites.net/demand')
         demand_data=demand_response.json()
 
+        sun_response = requests.get('https://icelec50015.azurewebsites.net/sun') # Send GET request to third party server
+        sun_data = sun_response.json()['sun']
+
         update_lag_array(current_sell_price)
 
         # Ensure we have at least three values
@@ -110,7 +113,8 @@ def send_helper_data():
             'yesterday_sell_prices': yesterday_sell_prices,
             'demand' : demand_data['demand'],
             'lags' : last_three_sell_prices,
-            'tick': tick
+            'tick': tick,
+            'sun' : sun_data
         })
     except Exception as e:
         print(f"Error in helper: {e}")
