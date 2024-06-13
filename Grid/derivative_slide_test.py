@@ -231,11 +231,11 @@ for i in range(0,1000000): # should be the while true loop
             iL = Vshunt/SHUNT_OHMS
             pwm_ref = saturate(65536-(int((vpot/3.3)*65536)),max_pwm,min_pwm) # convert the pot value to a PWM value for use later
             #tosend = myclient('146.169.253.108',5001)  # object to send data
-            if iL < -1.5:
+            if iL < -1.9:
                
                 duty = int(65536 -pwm_out) + 1000
                 pwm.duty_u16(duty)
-            if iL > 1.5:
+            if iL > 1.9:
                 duty = int (65536- pwm_out) - 1000
                 pwm.duty_u16(duty)
             
@@ -248,9 +248,9 @@ for i in range(0,1000000): # should be the while true loop
                 diff = v_err-previous
                 slide = 20*v_err+10*diff
                 if slide > 0.1:   # that means reference voltage is greater, so increase duty
-                     v_pi_out = v_pi_out - slide
+                     v_pi_out = saturate(v_pi_out - slide,max_pwm,min_pwm)
                 if slide < -0.1: # that means reference voltage is smaller than vb , vb must decrease
-                     v_pi_out = v_pi_out + slide
+                     v_pi_out = saturate(v_pi_out + slide,max_pwm,min_pwm)
            
                 
                 previous = v_err  
