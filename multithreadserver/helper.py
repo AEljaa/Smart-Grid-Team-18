@@ -56,16 +56,17 @@ def return_irradiance():
 
 def return_demand():
     _,_,_,_,demand,_=fetch_latest()
-    leftforfefferable=4-demand
-
-
     return demand
 
 
-def deferablehell(Tick, freepower,derablelist,demand ):
+def deferablehell(freepower):
+    source = requests.get(url).json()
+    demand = source['demand']
+    tick = source['tick']
+    derablelist = source ['deferables']
     ratiolist=[]
     for deferable in derablelist:
-        if deferable[2]<= Tick:
+        if deferable[2]<= tick:
             ratiolist.append(deferable[1] / (deferable[0]-deferable[2]))
     max=0
     postion=0

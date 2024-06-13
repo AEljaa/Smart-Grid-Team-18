@@ -45,8 +45,8 @@ class MyServer:
 
                 if self.mydatain in ["LED1", "LED2", "LED3", "LED4"]:
                     currentdemand= str(helper.return_demand())
-                    playroom=4-currentdemand 
-                    self.mydataout=helper.deferablehell(,playroom,,helper.return_demand())#tick, deferable list need added
+                    playroom=4-int(currentdemand)
+                    self.mydataout=helper.deferablehell(playroom)#tick, deferable list need added
                     conn.send(self.mydataout.encode())
                     print("Sent:", str(self.mydataout))
                 elif self.mydatain == "Grid":

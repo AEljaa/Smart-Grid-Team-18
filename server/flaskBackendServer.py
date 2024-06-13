@@ -4,6 +4,7 @@ from flask_cors import CORS
 
 last_three_sell_prices = []
 grid_data={}
+
 def cleanData(data):
     buyHist = []
     demandHist = []
@@ -15,7 +16,12 @@ def cleanData(data):
         sellHist.append(item['sell_price'])
         tick.append(item["tick"])
     return buyHist, demandHist, sellHist, tick
-
+def cleanDef(data):
+    retArr=[]
+    for item in data:
+        retArr.append([item['end'],item['energy'],item['start']])
+    return retArr
+    
 app = Flask(__name__)
 CORS(app)  # This will prevent the annoying CORS errors we get whenever we access the server
 
@@ -101,6 +107,10 @@ def send_helper_data():
         sun_response = requests.get('https://icelec50015.azurewebsites.net/sun') # Send GET request to third party server
         sun_data = sun_response.json()['sun']
 
+        deferable_response = requests.get('https://icelec50015.azurewebsites.net/deferables')
+        deferable_data = deferable_response.json()
+
+        deferable_data=cleanDef(deferable_data)
         update_lag_array(current_sell_price)
 
         # Ensure we have at least three values
@@ -114,7 +124,8 @@ def send_helper_data():
             'demand' : demand_data['demand'],
             'lags' : last_three_sell_prices,
             'tick': tick,
-            'sun' : sun_data
+            'sun' : sun_data,
+            'deferables' : deferable_data
         })
     except Exception as e:
         print(f"Error in helper: {e}")
