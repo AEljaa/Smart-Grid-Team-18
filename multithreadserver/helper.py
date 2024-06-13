@@ -7,11 +7,7 @@ url="http://127.0.0.1:4000/helper" #from our flask api
 #model = joblib.load("ml.pkl")
 model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithreadserver\ml.pkl")
 wallet=0
-<<<<<<< HEAD
 
-
-=======
->>>>>>> cdb9bf7a4b3896cbb76cb1d1e9ec9ed051d6d64b
 def fetch_latest():
     source = requests.get(url).json()
     lags = source["lags"]
