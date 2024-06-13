@@ -63,8 +63,6 @@ def return_demand():
 
 
     
-if __name__ == "__main__":
-    algorithm()
 
 
 
