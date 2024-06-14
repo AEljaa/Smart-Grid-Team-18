@@ -5,6 +5,8 @@ import time
 import socket
 import math
 
+
+            
 class myclient():
 
     def __init__(self,host,port):
@@ -12,54 +14,53 @@ class myclient():
         self.host = host
         self.port = port
         self.count = 0
-        self.stop = false
+        self.stop = False
         self.mydataout = ""
         self.mydatain = ""
         self.finaldeng=0
         try: 
             #while not self.stop:
-                print("connecting to",self.host,self.port)
-                self.mysocket = socket.socket(socket.af_inet, socket.sock_stream)
-                self.mysocket.connect((self.host,self.port))        
+                print("Connecting to",self.host,self.port)
+                self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.mySocket.connect((self.host,self.port))        
                 
-        except keyboardinterrupt:
-                print("quitting")
-                stop = true
-                self.mysocket.close()
+        except KeyboardInterrupt:
+                print("Quitting")
+                stop = True
+                self.mySocket.close()
 
         except:
-                print("error")
-                self.mysocket.close()
+                print("Error")
+                self.mySocket.close()
                 
         finally:
-                print("cleaning")
+                print("Cleaning")
                 #give the server some time
                 time.sleep(1)
     def senddata(self,datatosend,number):
         self.mydataout=datatosend
-        self.mysocket.send(self.mydataout.encode())
-        print("sent:",self.mydataout)
+        self.mySocket.send(self.mydataout.encode())
+        print("Sent:",self.mydataout)
                 
-        self.mydatain = self.mysocket.recv(1024).decode()
-        print("received:",self.mydatain)
+        self.mydatain = self.mySocket.recv(1024).decode()
+        print("Received:",self.mydatain)
                 
         if self.mydataout.upper() == self.mydatain:
-            print("data recieved ok")
+            print("Data recieved ok")
             ##extra reciver
             self.mydataout=str(number)
-            self.mysocket.send(self.mydataout.encode())
-            print("sent:",self.mydataout)
-            self.mydatain = self.mysocket.recv(1024).decode()
-            print("received:",self.mydatain)
+            self.mySocket.send(self.mydataout.encode())
+            print("Sent:",self.mydataout)
+            self.mydatain = self.mySocket.recv(1024).decode()
+            print("Received:",self.mydatain)
             
             self.finaldeng=self.mydatain
         else:
-            print("data error")
+            print("Data error")
     def close(self):
         print("closing")
-        self.mysocket.close()
+        self.mySocket.close()
         
-       
 previous = 0
 # Set up some pin allocations for the Analogues and switches
 va_pin = ADC(Pin(28))
@@ -124,8 +125,8 @@ SHUNT_OHMS = 0.10
 
 # saturation function for anything you want saturated within bounds
 
-SSID = 'sus'
-PASSWORD = 'suspassword'
+SSID = 'Sophie'
+PASSWORD = 'EEE123EEE'
 def connectwifi (ssid, password):
 
     wlan = network.WLAN(network.STA_IF)
@@ -188,94 +189,91 @@ class ina219:
 connectwifi('sus','suspassword')
 # Here we go, main function, always executes
 #tosend = myclient('146.169.240.74',5001)  # object to send data
-i=0
-while True:
-    try:
-        i+=1
-        if first_run:
-            
-            # for first run, set up the INA link and the loop timer settings
-            ina = ina219(SHUNT_OHMS, 64, 5)
-            ina.configure()
-            first_run = 0
-            
-            # This starts a 1kHz timer which we use to control the execution of the control loops and sampling
-            loop_timer = Timer(mode=Timer.PERIODIC, freq=1000, callback=tick)
+powerarr=[]
+for i in range(0,1000000): # should be the while true loop
+    if first_run:
         
-        # If the timer has elapsed it will execute some functions, otherwise it skips everything and repeats until the timer elapses
-        if timer_elapsed == 1: # This is executed at 1kHz
-            va = 1.017*(12490/2490)*3.3*(va_pin.read_u16()/65536) # calibration factor * potential divider ratio * ref voltage * digital reading
-            vb = 1.015*(12490/2490)*3.3*(vb_pin.read_u16()/65536) # calibration factor * potential divider ratio * ref voltage * digital reading
+        # for first run, set up the INA link and the loop timer settings
+        ina = ina219(SHUNT_OHMS, 64, 5)
+        ina.configure()
+        first_run = 0
+        
+        # This starts a 1kHz timer which we use to control the execution of the control loops and sampling
+        loop_timer = Timer(mode=Timer.PERIODIC, freq=1000, callback=tick)
+    
+    # If the timer has elapsed it will execute some functions, otherwise it skips everything and repeats until the timer elapses
+    if timer_elapsed == 1: # This is executed at 1kHz
+        va = 1.017*(12490/2490)*3.3*(va_pin.read_u16()/65536) # calibration factor * potential divider ratio * ref voltage * digital reading
+        vb = 1.015*(12490/2490)*3.3*(vb_pin.read_u16()/65536) # calibration factor * potential divider ratio * ref voltage * digital reading
+        
+        
+        vpot_in = 1.026*3.3*(vpot_pin.read_u16()/65536) # calibration factor * potential divider ratio * ref voltage * digital reading
+        v_pot_filt[v_pot_index] = vpot_in # Adds the new reading to our array of readings at the current index
+        v_pot_index = v_pot_index + 1 # Moves the index of the buffer for next time
+        if v_pot_index == 100: # Loops it round if it reaches the end
+            v_pot_index = 0
+        vpot = sum(v_pot_filt)/100 # Actual reading used is the average of the last 100 readings
+        
+        Vshunt = ina.vshunt()
+        CL = OL_CL_pin.value() # Are we in closed or open loop mode
+        BU = BU_BO_pin.value() # Are we in buck or boost mode?
             
+        # New min and max PWM limits and we use the measured current directly
+        min_pwm = 0 
+        max_pwm = 64536
+        iL = Vshunt/SHUNT_OHMS
+        pwm_ref = saturate(65536-(int((vpot/3.3)*65536)),max_pwm,min_pwm) # convert the pot value to a PWM value for use later
+        #tosend = myclient('146.169.253.108',5001)  # object to send data
+        if iL < -1.9:
+           
+            duty = int(65536 -pwm_out) + 1000
+            pwm.duty_u16(duty)
+        if iL > 1.9:
+            duty = int (65536- pwm_out) - 1000
+            pwm.duty_u16(duty)
+        
+        if min_pwm < pwm_out < max_pwm:  # maybe greater or equal
+            v_ref = BUS
+            v_err = -vb + v_ref #ref voltage
+            v_err_int = v_err_int + v_err 
+            v_err_int = saturate(v_err_int, 10000, -10000)  # Saturate the integral error
+            v_pi_out = (kp * v_err) + (ki * v_err_int) #+ (ks * v_err if vb>BUS+0.5) - ks * (v_err if vb<BUS-0.5)
+            diff = v_err-previous
+            slide = v_err**2+v_err_int**2 -2*abs(v_err*v_err_int)
+            if slide > 0.1:   # that means reference voltage is greater, so increase duty
+                 v_pi_out = saturate(v_pi_out + slide,max_pwm,min_pwm)
+            if slide < -0.1: # that means reference voltage is smaller than vb , vb must decrease
+                 v_pi_out = saturate(v_pi_out - slide,max_pwm,min_pwm)
+       
             
-            vpot_in = 1.026*3.3*(vpot_pin.read_u16()/65536) # calibration factor * potential divider ratio * ref voltage * digital reading
-            v_pot_filt[v_pot_index] = vpot_in # Adds the new reading to our array of readings at the current index
-            v_pot_index = v_pot_index + 1 # Moves the index of the buffer for next time
-            if v_pot_index == 100: # Loops it round if it reaches the end
-                v_pot_index = 0
-            vpot = sum(v_pot_filt)/100 # Actual reading used is the average of the last 100 readings
-            
-            Vshunt = ina.vshunt()
-            CL = OL_CL_pin.value() # Are we in closed or open loop mode
-            BU = BU_BO_pin.value() # Are we in buck or boost mode?
+            previous = v_err  
+            pwm_out = saturate(v_pi_out ,max_pwm,min_pwm)
+            duty = int(65536-pwm_out) # Invert because reasons
+            pwm.duty_u16(duty) # Send the output of the PI controller out as PWM
+
+        else:
+            v_err_int = 0
+            pwm_out = 30000
+
+
+        count = count + 1
+        timer_elapsed = 0
+        # current tracking idea for changing duty cycle to keep v constant and current minimal
+        
+        #tosend = myclient('192.168.43.86',5001)
+        
+        # This set of prints executes every 100 loops by default and can be used to output debug or extra info over USB enable or disable lines as needed
+        if (i%100==0):
+            tosend = myclient('192.168.43.86',5001)
+            tosend.senddata('Grid',iL)
+            tosend.close()
+
                 
-            # New min and max PWM limits and we use the measured current directly
-            min_pwm = 0 
-            max_pwm = 64536
-            iL = Vshunt/SHUNT_OHMS
-            pwm_ref = saturate(65536-(int((vpot/3.3)*65536)),max_pwm,min_pwm) # convert the pot value to a PWM value for use later
-            #tosend = myclient('146.169.253.108',5001)  # object to send data
-            if iL < -1.9:
-               
-                duty = int(65536 -pwm_out) + 1000
-                pwm.duty_u16(duty)
-            if iL > 1.9:
-                duty = int (65536- pwm_out) - 1000
-                pwm.duty_u16(duty)
+            count = 0
+            print (vb)
             
-            if min_pwm < pwm_out < max_pwm:  # maybe greater or equal
-                v_ref = BUS
-                v_err = -vb + v_ref #ref voltage
-                v_err_int = v_err_int + v_err 
-                v_err_int = saturate(v_err_int, 10000, -10000)  # Saturate the integral error
-                v_pi_out = (kp * v_err) + (ki * v_err_int) #+ (ks * v_err if vb>BUS+0.5) - ks * (v_err if vb<BUS-0.5)
+        #tosend.close()
 
-                slide = v_err**2+v_err_int**2 -2*abs(v_err*v_err_int)
-                if slide > 0.1:   # that means reference voltage is greater, so increase duty
-                    v_pi_out = saturate(v_pi_out - slide,max_pwm,min_pwm)
-                if slide < -0.1: # that means reference voltage is smaller than vb , vb must decrease
-                    v_pi_out = saturate(v_pi_out + slide,max_pwm,min_pwm)
-                
-                  
-                pwm_out = saturate(v_pi_out ,max_pwm,min_pwm)
-                duty = int(65536-pwm_out) # Invert because reasons
-                pwm.duty_u16(duty) # Send the output of the PI controller out as PWM
-
-            else:
-                v_err_int = 0
-                pwm_out = 30000
-
-
-            count = count + 1
-            timer_elapsed = 0
-            # current tracking idea for changing duty cycle to keep v constant and current minimal
-            
-            # This set of prints executes every 100 loops by default and can be used to output debug or extra info over USB enable or disable lines as needed
-            if (i%100)==0:
-                #tosend = myclient('192.168.43.86',5001)
-                #tosend.senddata('Grid')
-                #tosend.close()
-                
-                sender=myclient("192.168.43.86",5001)
-                sender.senddata("Storage", str(73))
-                sender.finaldeng=73
-                sender.close()
-
-                print(vb) # to see if it does indeed work as it should
-                count = 0
-
-    except:
-                print("error")
 
 
 
