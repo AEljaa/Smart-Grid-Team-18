@@ -70,6 +70,7 @@ def deferablehell(freepower):
             ratiolist.append(deferable[1] / (deferable[0]-deferable[2]))
     max=0
     postion=0
+    #if deferable now at 0, remove
     for i in range (0, len(ratiolist)):
         if ratiolist[i]>= max:
             postion=i
@@ -77,9 +78,12 @@ def deferablehell(freepower):
     
     if derablelist[postion][1]-5*freepower >=0: 
         derablelist[postion][1]=derablelist[postion][1]-5*freepower
+        print("Deferable at",derablelist[postion], "has ", derablelist[postion][1] )
         return 4
     else:
         derablelist[postion][1]=derablelist[postion][1]-5*freepower
+        print("Deferable at",derablelist[postion], "has ", derablelist[postion][1] )
         return (derablelist[postion][1]/5)+demand
         
+
  
