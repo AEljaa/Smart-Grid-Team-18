@@ -3,44 +3,49 @@ import NavBar from '../components/NavBar';
 import { Link } from 'react-router-dom';
 import './Energy.css';
 
-export default function Energy() {
-//   const [data, setData] = useState({});
+export default function Home() {
+  const [currBuy,setCurrBuy] = useState(0);
+  const [currSell,setCurrSell] = useState(0);
+  const [buyPrice, setBuyPrice] = useState(0);
+  const [sellPrice, setSellPrice] = useState(0);
 
-//   const fetchData = async () => {
-//     try {
-//       const response = await fetch('https://your-webserver-endpoint.com/data'); // Get the data from the server
-//       const result = await response.json();
-//       setData(result);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        response = await fetch("http://127.0.0.1:4000/forward_grid_data")
+        let gridData = await response.json()
+        setCurrBuy(currBuy.buy)//how much we just bought
+        setCurrSell(currSell.sell) //how much we just sold
+        
+        let response = await fetch("http://127.0.0.1:4000/webdata");
+        let data = await response.json();
+        setBuyPrice(data.buy_price);
+        setSellPrice(data.sell_price);
 
-//   useEffect(() => {
-//     fetchData();
-//     const interval = setInterval(fetchData, 5000);
-//     return () => clearInterval(interval);
-//   }, []);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
+    fetchData();
+    const interval = setInterval(fetchData, 100);//grid changes every 100ms
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="container">
       <NavBar />
-      <h1 className="title">Energy Trading</h1>
-      <div className="textBox">
-        <h2 className="textLabel">Import Cost</h2>
-        <p className="textValue">{2}</p>
-        <button className="button" onClick={() => console.log("Import")}>
-          Import
-        </button>
+      <div className="content">
+        <h1 className="title">Current Grid Information</h1>
+            <div className="text-box">
+              <h2 className="text-label">Exported Energy Value</h2>
+              <p className="text-value">£{(currBuy*sellPrice)/100}</p>
+            </div>
+           <div className="text-box">
+              <h2 className="text-label">Imported Energy Value</h2>
+              <p className="text-value">£{(currSell*buyPrice)/100}</p>
+           </div>
       </div>
-      <div className="textBox">
-        <h2 className="textLabel">Export Cost</h2>
-        <p className="textValue">{3}</p>
-        <button className="button" onClick={() => console.log("Export")}>
-          Export
-        </button>
-      </div>
-      <Link to="/" className="link">Go to Home</Link>
     </div>
   );
 }
+

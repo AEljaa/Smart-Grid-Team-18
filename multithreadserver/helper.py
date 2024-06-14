@@ -43,7 +43,7 @@ def algorithm(MaxAmount):
     decr = np.array_equal(test_list, sorted(test_list, reverse=True))
     incr = all(i < j for i, j in zip(predicted_prices[0], predicted_prices[0][1:]))#https://www.geeksforgeeks.org/python-check-if-list-is-strictly-increasing/  if pred array increases the nprice trending up, buy
     if(decr):
-        res=MaxAmount*ratio*-1
+        res=(46-MaxAmount)*ratio*-1
     if incr:
         res=MaxAmount*ratio
     return res

@@ -5,7 +5,7 @@ from werkzeug.wrappers import response
 
 last_three_sell_prices = []
 grid_data={}
-
+cap_data={}
 def cleanData(data):
     buyHist = []
     demandHist = []
@@ -57,9 +57,6 @@ def get_website_data():
     except Exception as e:
         print(f"Error fetching webs data: {e}")
         return jsonify({'error': 'An error occurred while fetching webs data'}), 500
-
-
-
 
 
 @app.route('/yesterday', methods=['GET'])
@@ -131,8 +128,9 @@ def send_helper_data():
     except Exception as e:
         print(f"Error in helper: {e}")
         return jsonify({'error': 'An error occurred while processing helper'}), 500
-@app.route('/send_data', methods=['POST'])
-def receive_data():
+
+@app.route('/send_grid_data', methods=['POST'])
+def receive_grid_data():
     global grid_data
     try:
         received_data = request.json  # Data is sent in json format so got to handle
@@ -145,14 +143,38 @@ def receive_data():
         print(f"Error processing received data: {e}")
         return jsonify({'error': 'An error occurred while processing data'}), 500
 
-@app.route('/forward_data', methods=['GET'])
-def forward_data():
+@app.route('/forward_grid_data', methods=['GET'])
+def forward_grid_data():
     try:
         # Check if data is stored
-        print(grid_data)
         if grid_data:
-            print(grid_data)
             return jsonify(grid_data), 200
+        else:
+            return jsonify({'message': 'No data available'}), 404
+    except Exception as e:
+        print(f"Error forwarding data: {e}")
+        return jsonify({'error': 'An error occurred while forwarding data'}), 500
+
+@app.route('/send_cap_data', methods=['POST'])
+def receive_cap_data():
+    global cap_data
+    try:
+        received_data = request.json  # Data is sent in json format so got to handle
+        print('Received data:', received_data)
+       
+        cap_data = received_data
+
+        return jsonify({'message': 'Data received successfully'}), 200
+    except Exception as e:
+        print(f"Error processing received data: {e}")
+        return jsonify({'error': 'An error occurred while processing data'}), 500
+
+@app.route('/forward_cap_data', methods=['GET'])
+def forward_cap_data():
+    try:
+        # Check if data is stored
+        if cap_data:
+            return jsonify(cap_data), 200
         else:
             return jsonify({'message': 'No data available'}), 404
     except Exception as e:

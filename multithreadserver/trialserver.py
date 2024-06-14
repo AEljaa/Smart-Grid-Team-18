@@ -4,9 +4,20 @@ import threading
 import helper
 import json
 import requests
-def send_data_to_flask(data):
+def send_cap_data_to_flask(data):
     try:
-        url = 'http://localhost:4000/send_data'  
+        url = 'http://localhost:4000/send_cap_data'  
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200:
+            print('Data sent successfully to Flask backend')
+        else:
+            print(f'Failed to send data. Status code: {response.status_code}')
+    except Exception as e:
+        print(f"Error sending data to Flask backend: {e}")
+def send_grid_data_to_flask(data):
+    try:
+        url = 'http://localhost:4000/send_grid_data'  
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 200:
@@ -54,12 +65,15 @@ class MyServer:
                 elif self.mydatain == "Grid":
                     self.mydatain = conn.recv(1024).decode()
                     #FIND WHAT MEAN KIN MONEY TERMS AND GO ON WEB
-                    send_data_to_flask(self.mydatain)
+                    ## if power positive then you are buying if negative then selling expect in joules
+                    send_grid_data_to_flask(self.mydatain)
                     print("Received from Grid:", str(self.mydatain))
+                    conn.send(str("GRID").encode())
 
                 elif self.mydatain == "Storage":
                     self.mydatain = conn.recv(1024).decode()
                     print("Revieved from Storage:", str(self.mydatain))
+                    send_cap_data_to_flask(self.mydatain)
                     if self.mydatain!="0": #if we have no enge
                         algoout=helper.algorithm(46- float(self.mydatain))
                         self.mydataout=str(algoout)
