@@ -189,8 +189,8 @@ class ina219:
 
 # Here we go, main function, always executes
 #tosend = myclient('146.169.240.74',5001)  # object to send data
-powerarr=[]
-for i in range(0,1000000): # should be the while true loop
+powerarr=[0]*100
+while True: # should be the while true loop
     if first_run:
         
         # for first run, set up the INA link and the loop timer settings
@@ -261,17 +261,17 @@ for i in range(0,1000000): # should be the while true loop
         # current tracking idea for changing duty cycle to keep v constant and current minimal
         
         #tosend = myclient('192.168.43.86',5001)
-        powerarr.append(iL*vb)
         # This set of prints executes every 100 loops by default and can be used to output debug or extra info over USB enable or disable lines as needed
-        if (i%100==0):
+        if count>100:
             tosend = myclient('192.168.43.86', 5001)
-            data = sum(powerarr)/len(powerarr)
-            tosend.senddata('Grid', data)
+            data = iL * vb
+            tosend.senddata('Grid', str(data))
             tosend.close()
+            print (data)
 
                 
             count = 0
-            print (vb)
+            
             
         #tosend.close()
 
