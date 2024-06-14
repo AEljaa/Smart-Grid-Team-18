@@ -11,63 +11,55 @@ class myclient():
         
         self.host = host
         self.port = port
-        #self.count = 0
-        self.stop = False
-        self.mydataout = "please work"
+        self.count = 0
+        self.stop = false
+        self.mydataout = ""
         self.mydatain = ""
-        self.buy=0
-        self.sell=0
-        
+        self.finaldeng=0
         try: 
             #while not self.stop:
-                print("Connecting to",self.host,self.port)
-                self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-                self.mySocket.connect((self.host,self.port))        
-
+                print("connecting to",self.host,self.port)
+                self.mysocket = socket.socket(socket.af_inet, socket.sock_stream)
+                self.mysocket.connect((self.host,self.port))        
                 
-
-                
-        except KeyboardInterrupt:
-                print("Quitting")
-                stop = True
-                self.mySocket.close()
+        except keyboardinterrupt:
+                print("quitting")
+                stop = true
+                self.mysocket.close()
 
         except:
-                print("Error")
-                self.mySocket.close()
+                print("error")
+                self.mysocket.close()
                 
         finally:
-                print("Cleaning")
-                #self.mySocket.close()
-                print("get ehere")
-                #GPIO.cleanup()
+                print("cleaning")
                 #give the server some time
                 time.sleep(1)
-    def senddata(self,datatosend):
+    def senddata(self,datatosend,number):
         self.mydataout=datatosend
-        self.mySocket.send(self.mydataout.encode())
-        print("Sent:",self.mydataout)
+        self.mysocket.send(self.mydataout.encode())
+        print("sent:",self.mydataout)
                 
-        self.mydatain = self.mySocket.recv(1024).decode()
-        print("Received:",self.mydatain)
+        self.mydatain = self.mysocket.recv(1024).decode()
+        print("received:",self.mydatain)
                 
         if self.mydataout.upper() == self.mydatain:
-            print("Data recieved ok")
-            self.mydatain = self.mySocket.recv(1024).decode()
-            self.sell=self.mydatain
-            self.mydatain = self.mySocket.recv(1024).decode()
-            self.buy=self.mydatain
+            print("data recieved ok")
+            ##extra reciver
+            self.mydataout=str(number)
+            self.mysocket.send(self.mydataout.encode())
+            print("sent:",self.mydataout)
+            self.mydatain = self.mysocket.recv(1024).decode()
+            print("received:",self.mydatain)
             
-            print("Received:",self.mydatain)
+            self.finaldeng=self.mydatain
         else:
-            print("Data error")
-    def retrivesent(self):
-        return self.mydatain
+            print("data error")
     def close(self):
         print("closing")
-        self.mySocket.close()
+        self.mysocket.close()
         
+       
 previous = 0
 # Set up some pin allocations for the Analogues and switches
 va_pin = ADC(Pin(28))
@@ -132,8 +124,8 @@ SHUNT_OHMS = 0.10
 
 # saturation function for anything you want saturated within bounds
 
-SSID = 'Sophie'
-PASSWORD = 'EEE123EEE'
+SSID = 'sus'
+PASSWORD = 'suspassword'
 def connectwifi (ssid, password):
 
     wlan = network.WLAN(network.STA_IF)
@@ -196,9 +188,10 @@ class ina219:
 connectwifi('sus','suspassword')
 # Here we go, main function, always executes
 #tosend = myclient('146.169.240.74',5001)  # object to send data
-
-for i in range(0,1000000): # should be the while true loop
+i=0
+while True:
     try:
+        i+=1
         if first_run:
             
             # for first run, set up the INA link and the loop timer settings
@@ -273,6 +266,11 @@ for i in range(0,1000000): # should be the while true loop
                 #tosend.senddata('Grid')
                 #tosend.close()
                 
+                sender=myclient("192.168.43.86",5001)
+                sender.senddata("Storage", str(73))
+                sender.finaldeng=73
+                sender.close()
+
                 print(vb) # to see if it does indeed work as it should
                 count = 0
 
