@@ -9,57 +9,66 @@ import math
             
 class myclient():
 
-    def __init__(self,host,port):
-        
+    def __init__(self, host, port):
         self.host = host
         self.port = port
-        self.count = 0
-        self.stop = False
         self.mydataout = ""
         self.mydatain = ""
-        self.finaldeng=0
-        try: 
-            #while not self.stop:
-                print("Connecting to",self.host,self.port)
-                self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.mySocket.connect((self.host,self.port))        
-                
-        except KeyboardInterrupt:
-                print("Quitting")
-                stop = True
-                self.mySocket.close()
+        self.finaldeng = 0
+        self.mySocket = None
+        self.connect()
 
-        except:
-                print("Error")
-                self.mySocket.close()
-                
-        finally:
-                print("Cleaning")
-                #give the server some time
-                time.sleep(1)
-    def senddata(self,datatosend,number):
-        self.mydataout=datatosend
-        self.mySocket.send(self.mydataout.encode())
-        print("Sent:",self.mydataout)
-                
-        self.mydatain = self.mySocket.recv(1024).decode()
-        print("Received:",self.mydatain)
-                
-        if self.mydataout.upper() == self.mydatain:
-            print("Data recieved ok")
-            ##extra reciver
-            self.mydataout=str(number)
+    def connect(self):
+        try:
+            print("Connecting to", self.host, self.port)
+            self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.mySocket.connect((self.host, self.port))
+        except Exception as e:
+            print("Connection Error:", e)
+            self.mySocket.close()
+            time.sleep(1)
+            self.connect()
+
+    def senddata(self, datatosend, number):
+        try:
+            self.mydataout = datatosend
             self.mySocket.send(self.mydataout.encode())
-            print("Sent:",self.mydataout)
+            print("Sent:", self.mydataout)
+
             self.mydatain = self.mySocket.recv(1024).decode()
-            print("Received:",self.mydatain)
-            
-            self.finaldeng=self.mydatain
-        else:
-            print("Data error")
+            print("Received:", self.mydatain)
+
+            if self.mydataout.upper() == self.mydatain:
+                print("Data received ok")
+                self.mydataout = str(number)
+                self.mySocket.send(self.mydataout.encode())
+                print("Sent:", self.mydataout)
+                self.mydatain = self.mySocket.recv(1024).decode()
+                print("Received:", self.mydatain)
+
+                self.finaldeng = self.mydatain
+            else:
+                print("Data error")
+        except Exception as e:
+            print("Send/Receive Error:", e)
+            self.connect()
+
     def close(self):
-        print("closing")
+        print("Closing socket")
         self.mySocket.close()
+
+def connectwifi(ssid, password):
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    wlan.connect(ssid, password)  # Connects to given SSID
+    while not wlan.isconnected():
+        time.sleep(1)
+    print('Connected to WiFi')
+
+SSID = 'sus'
+PASSWORD = 'suspassword'
+connectwifi(SSID, PASSWORD)
+
         
 previous = 0
 # Set up some pin allocations for the Analogues and switches
@@ -125,14 +134,6 @@ SHUNT_OHMS = 0.10
 
 # saturation function for anything you want saturated within bounds
 
-SSID = 'Sophie'
-PASSWORD = 'EEE123EEE'
-def connectwifi (ssid, password):
-
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    wlan.connect(ssid,password) #connects to given SSID
-
 def saturate(signal, upper, lower):  #sets the signal between max and min
     if signal > upper:
         signal = upper
@@ -185,8 +186,7 @@ class ina219:
         ina_i2c.writeto_mem(conf.address, conf.REG_CONFIG, b'\x19\x9F') # PG = /8
         ina_i2c.writeto_mem(conf.address, conf.REG_CALIBRATION, b'\x00\x00')
 
-#connectwifi(SSID,PASSWORD)
-connectwifi('sus','suspassword')
+
 # Here we go, main function, always executes
 #tosend = myclient('146.169.240.74',5001)  # object to send data
 powerarr=[]
@@ -261,11 +261,12 @@ for i in range(0,1000000): # should be the while true loop
         # current tracking idea for changing duty cycle to keep v constant and current minimal
         
         #tosend = myclient('192.168.43.86',5001)
-        
+        powerarr.append(iL*vb)
         # This set of prints executes every 100 loops by default and can be used to output debug or extra info over USB enable or disable lines as needed
         if (i%100==0):
-            tosend = myclient('192.168.43.86',5001)
-            tosend.senddata('Grid',iL)
+            tosend = myclient('192.168.43.86', 5001)
+            data = sum(powerarr)/len(powerarr)
+            tosend.senddata('Grid', data)
             tosend.close()
 
                 
@@ -273,6 +274,7 @@ for i in range(0,1000000): # should be the while true loop
             print (vb)
             
         #tosend.close()
+
 
 
 
