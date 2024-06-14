@@ -13,18 +13,13 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let response = await fetch("http://127.0.0.1:4000/sun");
-        let sunData = await response.json();
-        setSunIntensity(sunData.sun);
+        let response = await fetch("http://127.0.0.1:4000/webdata");
+        let data = await response.json();
+        setSunIntensity(data.sun);
 
-        response = await fetch("http://127.0.0.1:4000/price");
-        let priceData = await response.json();
-        setBuyPrice(priceData.buy_price);
-        setSellPrice(priceData.sell_price);
-
-        response = await fetch("http://127.0.0.1:4000/demand");
-        let demandData = await response.json();
-        setDemand(demandData.demand);
+        setBuyPrice(data.buy_price);
+        setSellPrice(data.sell_price);
+        setDemand(data.demand);
         
         response = await fetch("http://127.0.0.1:4000/forward_data")
         let gridData = await response.json()

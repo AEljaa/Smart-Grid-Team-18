@@ -1,6 +1,7 @@
 from flask import Flask, jsonify , request
 import requests
 from flask_cors import CORS
+from werkzeug.wrappers import response
 
 last_three_sell_prices = []
 grid_data={}
@@ -31,35 +32,35 @@ def update_lag_array(new_price):
         last_three_sell_prices.pop(0)
     last_three_sell_prices.append(new_price)
 
-@app.route('/sun', methods=['GET'])  
-def get_sun_data():
+@app.route('/webdata', methods=['GET'])
+def get_website_data():
     try:
-        response = requests.get('https://icelec50015.azurewebsites.net/sun') # Send GET request to third party server
-        sun_data = response.json()
-        return jsonify(sun_data)
-    except Exception as e:
-        print(f"Error fetching sun data: {e}")
-        return jsonify({'error': 'An error occurred while fetching sun data'}), 500
+        sun_response = requests.get('https://icelec50015.azurewebsites.net/sun')
+        sun_response.raise_for_status()  # Raise an error for bad status codes
+        sun_data = sun_response.json()
 
-@app.route('/price', methods=['GET'])
-def get_price_data():
-    try:
-        response = requests.get('https://icelec50015.azurewebsites.net/price')
-        price_data = response.json()
-        return jsonify(price_data)
-    except Exception as e:
-        print(f"Error fetching price data: {e}")
-        return jsonify({'error': 'An error occurred while fetching price data'}), 500
+        price_response = requests.get('https://icelec50015.azurewebsites.net/price')
+        price_response.raise_for_status()
+        price_data = price_response.json()
 
-@app.route('/demand', methods=['GET'])
-def get_demand_data():
-    try:
-        response = requests.get('https://icelec50015.azurewebsites.net/demand')
-        demand_data = response.json()
-        return jsonify(demand_data)
+        demand_response = requests.get('https://icelec50015.azurewebsites.net/demand')
+        demand_response.raise_for_status()
+        demand_data = demand_response.json()
+
+        return jsonify({
+            'buy_price': price_data["buy_price"],
+            'sell_price': price_data["sell_price"],
+            'sun': sun_data["sun"],
+            'demand': demand_data["demand"],
+            'tick': price_data["tick"]
+        })
     except Exception as e:
-        print(f"Error fetching demand data: {e}")
-        return jsonify({'error': 'An error occurred while fetching demand data'}), 500
+        print(f"Error fetching webs data: {e}")
+        return jsonify({'error': 'An error occurred while fetching webs data'}), 500
+
+
+
+
 
 @app.route('/yesterday', methods=['GET'])
 def get_yesterday_data():
