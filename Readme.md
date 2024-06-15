@@ -1,3 +1,17 @@
+<center>
+
+# The Slay Girlies : Smart Grid
+Smart Grid Summer Project for Imperial EEE/EIE 2023/24
+
+---
+
+**_Jennifer Emezie, Dhruv Ruda, Sophie Jayson, Rares Yousif, Adam El Jaafari, Arundhathi Pasquereau_**
+
+---
+
+</center>
+
+
 # The Slay Girlies' Solar Grid 
 ![Logo](./client/src/assets/logo.png)
 ## Build instructions
