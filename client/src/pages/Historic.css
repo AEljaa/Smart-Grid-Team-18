@@ -1,11 +1,9 @@
-/* Ensure the container takes the full width */
 .container {
     width: 100%;
     background-color: #150044;
-    padding-top: 60px; /* Adjust padding to accommodate navbar height */
+    padding-top: 60px; 
   }
   
-  /* Ensure the content takes the full width */
   .content {
     width: 100%;
     display: flex;
@@ -16,7 +14,6 @@
     padding: 20px;
   }
   
-  /* Title styling */
   .title {
     font-size: 32px;
     font-weight: bold;
@@ -26,11 +23,10 @@
     text-shadow: 0px 0px 0px rgba(0, 0, 0, 0.75);
   }
   
-  /* Chart container to allow wider display */
   .chart-container {
     width: 100%;
-    max-width: 1200px; /* Increase the max-width as needed */
-    height: 400px; /* Adjust the height as needed */
+    max-width: 1200px; 
+    height: 400px; 
     margin-top: 20px;
     background-color: #380e8c;
 

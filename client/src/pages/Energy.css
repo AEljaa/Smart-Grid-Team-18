@@ -3,9 +3,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #150044; /* Dark background color */
+    background-color: #150044; 
     padding-top: 80px;
-    min-height: 100vh; /* Ensure the container takes full height */
+    min-height: 100vh; 
     color: white;
   }
   
@@ -13,14 +13,21 @@
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 40px;
-    text-align: center; /* Center text horizontally */
+    text-align: center; 
   }
   
   .textBox {
     margin-bottom: 20px;
-    text-align: center; /* Center text horizontally */
+    text-align: center; 
   }
-  
+  .text-boxe {
+  background-color: #0D002D;
+  border-radius: 10px;
+  padding: 80px; 
+  text-align: center;
+  width: 50%; 
+  margin: 10px;
+}
   .textLabel {
     color: #ffffff;
     font-size: 18px;
@@ -40,8 +47,8 @@
     padding: 15px;
     border-radius: 10px;
     margin-top: 10px;
-    width: 200px; /* Adjust the width as needed */
-    text-align: center; /* Center the text inside the button */
+    width: 200px; 
+    text-align: center; 
     color: white;
     font-size: 18px;
     font-weight: bold;
@@ -50,7 +57,7 @@
   }
   
   .button:hover {
-    background-color: #0056b3; /* Change the color on hover */
+    background-color: #0056b3; 
   }
   
   .link {

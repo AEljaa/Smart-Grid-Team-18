@@ -18,6 +18,10 @@ def send_cap_data_to_flask(data):
 def send_grid_data_to_flask(data):
     try:
         url = 'http://localhost:4000/send_grid_data'  
+        if float(data)>0:
+            data=f'imp: {data}, exp: 0'
+        else:
+            data=f'imp: 0, exp: {data}'
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 200:
