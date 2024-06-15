@@ -11,9 +11,8 @@ Smart Grid Summer Project for Imperial EEE/EIE 2023/24
 
 </center>
 
-
-# The Slay Girlies' Solar Grid 
 ![Logo](./client/src/assets/logo.png)
+
 ## Build instructions
 In order to build the project once must follow the following instructions.
 
