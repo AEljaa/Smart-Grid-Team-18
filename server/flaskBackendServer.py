@@ -3,9 +3,11 @@ import requests
 from flask_cors import CORS
 
 last_three_sell_prices = []
-grid_data=""
+grid_data={}
 cap_data=""
 cap_graph_data=[0]*60
+profit=0
+grid_graph_data=[0]*60
 def cleanData(data):
     buyHist = []
     demandHist = []
@@ -131,9 +133,12 @@ def receive_grid_data():
     global grid_data
     try:
         received_data = request.json  # Data is sent in json format so got to handle
-        print('Received data:', received_data)
-       
         grid_data = received_data
+        response = requests.get('https://icelec50015.azurewebsites.net/price')
+        tick = response.json()["tick"]
+        grid_graph_data[tick]=int(grid_data)
+        grid_graph_data[tick+1:]=len(grid_graph_data[tick+1:])*[0]
+ 
 
         return jsonify({'message': 'Data received successfully'}), 200
     except Exception as e:
@@ -142,12 +147,34 @@ def receive_grid_data():
 
 @app.route('/forward_grid_data', methods=['GET'])
 def forward_grid_data():
+    global profit
     try:
         # Check if data is stored
+        response = requests.get('https://icelec50015.azurewebsites.net/price')
+        buyprice = response.json()["buy_price"]
+        sellprice = response.json()["sell_price"]
+        if(int(grid_data)>0):
+            profit -= abs(int(grid_data)*sellprice)
+        if(int(grid_data)<0):
+            profit +=abs(int(grid_data)*buyprice)
         if grid_data:
-            return jsonify(grid_data), 200
+            print("Sending",grid_data)
+            return jsonify({
+                'profit': profit,
+                'value' : grid_data
+
+            })
         else:
             return jsonify({'message': 'No data available'}), 404
+    except Exception as e:
+        print(f"Error forwarding data: {e}")
+        return jsonify({'error': 'An error occurred while forwarding data'}), 500
+
+@app.route('/forward_grid_graph_data', methods=['GET'])
+def forward_grid_graph_data():
+    try:
+        print(grid_graph_data)
+        return jsonify(grid_graph_data), 200
     except Exception as e:
         print(f"Error forwarding data: {e}")
         return jsonify({'error': 'An error occurred while forwarding data'}), 500
@@ -159,11 +186,10 @@ def receive_cap_data():
     try:
         response = requests.get('https://icelec50015.azurewebsites.net/price')
         tick = response.json()["tick"]
-        current_tick=tick
         received_data = request.json  # Data is sent in json format so got to handle   
         cap_data = received_data
-        cap_graph_data[current_tick]=int(cap_data)
-        cap_graph_data[current_tick+1:]=len(cap_graph_data[current_tick+1:])*[0]
+        cap_graph_data[tick]=int(cap_data)
+        cap_graph_data[tick+1:]=len(cap_graph_data[tick+1:])*[0]
         print(cap_graph_data)
         print('Received data:', cap_graph_data)
         return jsonify({'message': 'Data received successfully'}), 200
@@ -191,5 +217,6 @@ def forward_cap_graph_data():
     except Exception as e:
         print(f"Error forwarding data: {e}")
         return jsonify({'error': 'An error occurred while forwarding data'}), 500
+
 if __name__ == '__main__':
     app.run(port=4000, debug=True)  # API hosted on http://127.0.0.1:4000

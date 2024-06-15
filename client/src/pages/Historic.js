@@ -26,6 +26,7 @@ import {
 export default function Historic() {
   const [chartData, setChartData] = useState(0);
   const [chartCapData, setChartCapData] = useState(0);
+  const [chartGridData, setChartGridData] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -34,11 +35,27 @@ export default function Historic() {
         response = await fetch("http://127.0.0.1:4000/forward_cap_graph_data");
         let capData = await response.json();
 
+        response = await fetch("http://127.0.0.1:4000/forward_grid_graph_data")
+        let gridData = await response.json();
 
-        console.log(yesterdayData);
+        console.log(gridData);
         
         let labels = yesterdayData.tick;
-         const CapData ={
+         const GridData ={
+          labels: labels,
+          datasets: [
+            {
+              label: 'Energy Imported (+ve), Energy Exported (-ve) (Joules)',
+              data: gridData,
+              fill: true,
+              backgroundColor: 'rgba(75,192,192,0.4)',
+              borderColor: 'rgba(75,192,192,1)',
+            }
+          ] 
+        };
+
+
+          const CapData ={
           labels: labels,
           datasets: [
             {
@@ -80,6 +97,7 @@ export default function Historic() {
         };
         setChartData(data);
         setChartCapData(CapData);
+        setChartGridData(GridData);
       } catch (error) {
         console.error(error);
       }
@@ -101,7 +119,7 @@ export default function Historic() {
                 text: 'Values',
                 color: '#FFFFFF',
                 font: {
-                    size: 16,
+                    size: 20,
                     weight: 'bold'
                 }
             }
@@ -112,7 +130,7 @@ export default function Historic() {
                 text: 'Time (Ticks)',
                 color: '#FFFFFF',
                 font: {
-                    size: 16,
+                    size: 25,
                     weight: 'bold'
                 }
             }
@@ -125,13 +143,18 @@ return (
       <NavBar />
       <div className="content">
           <h1 className="title">History Data</h1>
+    <div className="chart-container-wrapper">
           <div className="chart-container">
               {chartData ? <Line data={chartData} options={options} /> : <p>Loading...</p>}
           </div>
           <div className="chart-container">
               {chartCapData ? <Line data={chartCapData} options={options} /> : <p>Loading...</p>}
         </div>
+          <div className="chart-container">
+              {chartGridData ? <Line data={chartGridData} options={options} /> : <p>Loading...</p>}
+        </div>
       </div>
+    </div>
   </div>
 );
 }

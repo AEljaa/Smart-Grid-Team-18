@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar';
 import './Home.css';
@@ -7,33 +8,39 @@ export default function Home() {
   const [sunIntensity, setSunIntensity] = useState(0);
   const [buyPrice, setBuyPrice] = useState(0);
   const [sellPrice, setSellPrice] = useState(0);
-  const [currBuy,setCurrBuy] = useState(0);
-  const [currSell,setCurrSell] = useState(0);
+  const [currImp, setCurrImp] = useState(0);
+  const [currExp, setCurrExp] = useState(0);
   const [demand, setDemand] = useState(0);
-  //const [GeneratedPow,setGen] = useState(0);
-  //const [StoredPow,setStor] = useState(0);
+  const [storedEnergy, setStoredEnergy] = useState(0); 
 
-  let startTime, endTime, duration;
   useEffect(() => {
     const fetchData = async () => {
       try {
-        startTime = performance.now();
-        let response = await fetch("http://127.0.0.1:4000/webdata");
-        let data = await response.json();
-        setSunIntensity(data.sun);
+        let startTime = performance.now();
 
-        setBuyPrice(data.buy_price);
-        setSellPrice(data.sell_price);
-        setDemand(data.demand);
-        
+        let response = await fetch("http://127.0.0.1:4000/webdata")
+        let webData= await response.json()
+
+        setSunIntensity(webData.sun);
+        setBuyPrice(webData.buy_price);
+        setSellPrice(webData.sell_price);
+        setDemand(webData.demand);
+
         response = await fetch("http://127.0.0.1:4000/forward_cap_data")
-        let gridData = await response.json()
-        //setGen(gridData)
-        //setStor(gridData)//maybe .stored
+        let capData= await response.json()
+        console.log(capData)
 
-        endTime = performance.now();
-        duration = endTime - startTime;
-        console.log(duration)
+        setStoredEnergy(capData.message != "No data available" ? capData : 0); 
+
+        response = await fetch("http://127.0.0.1:4000/forward_grid_data")
+        let gridData = await response.json()
+       
+        setCurrImp(gridData.value > 0 ? gridData.value : 0);// if value form grid is positive then imported
+        setCurrExp(gridData.value < 0 ? gridData.value : 0); // if negative then we exported
+        console.log(gridData)
+
+        let endTime = performance.now();
+        console.log(`Duration: ${endTime - startTime}ms`);
       } catch (error) {
         console.error(error);
       }
@@ -43,24 +50,7 @@ export default function Home() {
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, []);
-//Grid values change more frequently so needs own fetching
-useEffect(() => {
-    const fetchGridData = async () => {
-      try {
-        let response = await fetch("http://127.0.0.1:4000/forward_grid_data")
-        let gridData = await response.json()
-        setCurrBuy(gridData.buy)//how much we just bought
-        setCurrSell(gridData.sell) //how much we just sold
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchGridData();
-    const interval = setInterval(fetchGridData, 100);//grid changes every 100ms
-    return () => clearInterval(interval);
-  }, []);
-  return (
+   return (
     <div className="container">
       <NavBar />
       <div className="content">
@@ -77,11 +67,11 @@ useEffect(() => {
             </div>            
            <div className="text-box">
               <h2 className="text-label">Imported Energy Amount</h2>
-              <p className="text-value">{0}J</p>
+              <p className="text-value">{currImp}J</p>
           </div>
           <div className="text-box">
               <h2 className="text-label">Exported Energy Amount</h2>
-              <p className="text-value">{3}J</p>
+              <p className="text-value">{currExp}J</p>
           </div>
             <div className="text-box">
               <h2 className="text-label">External Sell Price Per Joule</h2>
@@ -94,7 +84,7 @@ useEffect(() => {
         </div>
             <div className="text-box">
               <h2 className="text-label">Current Stored Energy</h2>
-              <p className="text-value">27J</p>
+              <p className="text-value">{storedEnergy}J</p>
         </div>
         </div>
     </div>
