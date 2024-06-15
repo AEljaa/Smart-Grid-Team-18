@@ -7,6 +7,7 @@ Firstly
 - ensure ['final.py'](Storage/final.py) is loaded into the main memory of the Storage SMPS
 - ensure ['mppt final.py'](PV/mppt final.py) is loaded into the main memory of the PV SMPS
 - ensure  same with LED code
+- ensure all requirements are installed, this can be done by running in the root of the project the command `pip install -r requirements.txt`
 Secondly run the command `cd server` and run `python3 flaskBackendServer.py` now open another terminal and go back to the root of the project.
 Lastly run  the command `cd multithreadserver ` and run the command  `python3 trialserver.py` TODO CHANGE FILE NAMES
 
