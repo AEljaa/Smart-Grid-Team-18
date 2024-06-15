@@ -14,8 +14,8 @@ export default function Home() {
       try {
         response = await fetch("http://127.0.0.1:4000/forward_grid_data")
         let gridData = await response.json()
-        setCurrBuy(currBuy.buy)//how much we just bought
-        setCurrSell(currSell.sell) //how much we just sold
+        setCurrBuy(gridData.buy)//how much we just bought
+        setCurrSell(gridData.sell) //how much we just sold
         
         let response = await fetch("http://127.0.0.1:4000/webdata");
         let data = await response.json();

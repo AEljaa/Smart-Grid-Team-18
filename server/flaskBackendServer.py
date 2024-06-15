@@ -1,11 +1,11 @@
 from flask import Flask, jsonify , request
 import requests
 from flask_cors import CORS
-from werkzeug.wrappers import response
 
 last_three_sell_prices = []
-grid_data={}
-cap_data={}
+grid_data=""
+cap_data=""
+cap_graph_data=[0]*60
 def cleanData(data):
     buyHist = []
     demandHist = []
@@ -36,17 +36,14 @@ def update_lag_array(new_price):
 def get_website_data():
     try:
         sun_response = requests.get('https://icelec50015.azurewebsites.net/sun')
-        sun_response.raise_for_status()  # Raise an error for bad status codes
         sun_data = sun_response.json()
 
         price_response = requests.get('https://icelec50015.azurewebsites.net/price')
-        price_response.raise_for_status()
         price_data = price_response.json()
 
         demand_response = requests.get('https://icelec50015.azurewebsites.net/demand')
-        demand_response.raise_for_status()
         demand_data = demand_response.json()
-
+        current_tick = price_data["tick"]
         return jsonify({
             'buy_price': price_data["buy_price"],
             'sell_price': price_data["sell_price"],
@@ -158,12 +155,17 @@ def forward_grid_data():
 @app.route('/send_cap_data', methods=['POST'])
 def receive_cap_data():
     global cap_data
+    global cap_graph_data
     try:
-        received_data = request.json  # Data is sent in json format so got to handle
-        print('Received data:', received_data)
-       
+        response = requests.get('https://icelec50015.azurewebsites.net/price')
+        tick = response.json()["tick"]
+        current_tick=tick
+        received_data = request.json  # Data is sent in json format so got to handle   
         cap_data = received_data
-
+        cap_graph_data[current_tick]=int(cap_data)
+        cap_graph_data[current_tick+1:]=len(cap_graph_data[current_tick+1:])*[0]
+        print(cap_graph_data)
+        print('Received data:', cap_graph_data)
         return jsonify({'message': 'Data received successfully'}), 200
     except Exception as e:
         print(f"Error processing received data: {e}")
@@ -181,5 +183,13 @@ def forward_cap_data():
         print(f"Error forwarding data: {e}")
         return jsonify({'error': 'An error occurred while forwarding data'}), 500
 
+@app.route('/forward_cap_graph_data', methods=['GET'])
+def forward_cap_graph_data():
+    try:
+        print(cap_graph_data)
+        return jsonify(cap_graph_data), 200
+    except Exception as e:
+        print(f"Error forwarding data: {e}")
+        return jsonify({'error': 'An error occurred while forwarding data'}), 500
 if __name__ == '__main__':
     app.run(port=4000, debug=True)  # API hosted on http://127.0.0.1:4000

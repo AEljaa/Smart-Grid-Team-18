@@ -25,13 +25,32 @@ import {
 
 export default function Historic() {
   const [chartData, setChartData] = useState(0);
+  const [chartCapData, setChartCapData] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
       try {
         let response = await fetch("http://127.0.0.1:4000/yesterday");
         let yesterdayData = await response.json();
+        response = await fetch("http://127.0.0.1:4000/forward_cap_graph_data");
+        let capData = await response.json();
+
+
         console.log(yesterdayData);
+        
         let labels = yesterdayData.tick;
+         const CapData ={
+          labels: labels,
+          datasets: [
+            {
+              label: 'Stored Energy in Capacitor (Joules)',
+              data: capData,
+              fill: true,
+              backgroundColor: 'rgba(75,192,192,0.4)',
+              borderColor: 'rgba(75,192,192,1)',
+            }
+          ] 
+        };
+
         const data ={
           labels: labels,
           datasets: [
@@ -60,12 +79,16 @@ export default function Historic() {
           ] 
         };
         setChartData(data);
+        setChartCapData(CapData);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchData();
+    const interval = setInterval(fetchData, 5000); //Cap data changes every 5 secs so refresh graph
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  
   }, []);
 
   const options = {
@@ -105,6 +128,9 @@ return (
           <div className="chart-container">
               {chartData ? <Line data={chartData} options={options} /> : <p>Loading...</p>}
           </div>
+          <div className="chart-container">
+              {chartCapData ? <Line data={chartCapData} options={options} /> : <p>Loading...</p>}
+        </div>
       </div>
   </div>
 );
