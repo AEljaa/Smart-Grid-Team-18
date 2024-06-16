@@ -17,9 +17,9 @@ Smart Grid Summer Project for Imperial EEE/EIE 2023/24
 In order to build the project once must follow the following instructions.
 
 Firstly:
-- ensure ['gridweb.py'](Grid/gridweb.py) is loaded into the main memory of the Grid SMPS.
-- ensure ['final.py'](Storage/final.py) is loaded into the main memory of the Storage SMPS.
-- ensure ['mppt final.py'](PV/mppt final.py) is loaded into the main memory of the PV SMPS.
+- ensure [`gridweb.py`](Grid/gridweb.py) is loaded into the main memory of the Grid SMPS.
+- ensure [`final.py`](Storage/final.py) is loaded into the main memory of the Storage SMPS.
+- ensure [`mppt final.py`](PV/mppt%20final.py) is loaded into the main memory of the PV SMPS.
 - ensure  same with LED code.
 - ensure all requirements are installed, this can be done by running in the root of the project the command `pip install -r requirements.txt`.
 
@@ -36,7 +36,7 @@ Lastly run  the command `cd multithreadserver ` and run the command  `python3 tr
 |:--------------------|:------------------------------------------------------------------------------------------------------------------------------------------|:--------:|:-----:|:------:|:-----:|:----:|:----------:|
 | Grid                | [`gridweb.py`](Grid/gridweb.py)                                                                                                            |          |       |        |   o   |      |            |
 | Storage             | [`final.py`](Storage/final.py)                                                                                                                       |    o     |       |        |       |      |            |
-| PV                  | [`mppt final.py`](PV/mppt final.py), [`irradience tracker.py`](PV/irradience tracker.py)                                                                                                             |          |   o   |        |       |      |            |
+| PV                  | [`mppt final.py`](PV/mppt%20final.py), [`irradience tracker.py`](PV/irradience%20tracker.py)                                                                                                             |          |   o   |        |       |      |            |
 | LED (Load)          |                                                                                                                     |          |       |        |       |      |     o      |
 | Socket Server       | [`trialserver.py`](multithreadserver/trialserver.py)                                                                                                                     |          |       |   o    |       |      |            |
 | Web Frontend        | [`client`](client)                                                                                                                       |          |       |        |       |   o  |            |
@@ -49,11 +49,11 @@ This is the directory structure that was used for the project.
 
 Directory    | Use
 :-----------:|:------------------------------------------------
-`client`     | React webpage
-`server`     | Flask Server
-`multithreadedserver`         | Socket Server - Communication with picos
-`ml`         | Machine Learning 
-`Storage`    | Capacitor Code
-`PV`         | PV Code
-`Grid`       | Grid Code
+[`client`](./client/)     | React webpage
+[`server`](./server/)     | Flask Server
+[`multithreadedserver`](./multithreadserver/)         | Socket Server - Communication with picos
+[`ml`](./ml/)         | Machine Learning 
+[`Storage`](./Storage/)    | Capacitor Code
+[`PV`](./PV/)         | PV Code
+[`Grid`](./Grid/)       | Grid Code
 ___
