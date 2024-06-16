@@ -237,16 +237,16 @@ while True: # should be the while true loop
             v_err = -vb + v_ref #ref voltage
             v_err_int = v_err_int + v_err 
             v_err_int = saturate(v_err_int, 10000, -10000)  # Saturate the integral error
-            v_pi_out = (kp * v_err) + (ki * v_err_int) #+ (ks * v_err if vb>BUS+0.5) - ks * (v_err if vb<BUS-0.5)
-            diff = v_err-previous
+            v_pi_out = (kp * v_err) + (ki * v_err_int) # PI controller output for pwm
+            
             slide = v_err**2+v_err_int**2 -2*abs(v_err*v_err_int)
+            slide = saturate(slide,30000,-30000) # to ensure it does not go unbounded, saturation is included
             if slide > 0.1:   # that means reference voltage is greater, so increase duty
                  v_pi_out = saturate(v_pi_out + slide,max_pwm,min_pwm)
             if slide < -0.1: # that means reference voltage is smaller than vb , vb must decrease
                  v_pi_out = saturate(v_pi_out - slide,max_pwm,min_pwm)
        
-            
-            previous = v_err  
+              
             pwm_out = saturate(v_pi_out ,max_pwm,min_pwm)
             duty = int(65536-pwm_out) # Invert because reasons
             pwm.duty_u16(duty) # Send the output of the PI controller out as PWM
