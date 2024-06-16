@@ -93,7 +93,7 @@ pwm_ref = 30000
 trip = 0
 OC = 0
 
-ks = 12 # Slide constant
+
 # The potentiometer is prone to noise so we are filtering the value using a moving average
 v_pot_filt = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
               0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -112,8 +112,8 @@ v_ref = 0 # Voltage reference for the CL modes
 v_err = 0 # Voltage error
 v_err_int = 0 # Voltage error integral
 i_pi_out = 0 # Output of the voltage PI controller
-kp = 20 # Boost Proportional Gain tuned
-ki = 10 # Boost Integral Gain tuned
+kp = 20 # Proportional Gain tuned
+ki = 10 # Integral Gain tuned
 BUS = 15
 
 slide = 0
@@ -252,15 +252,15 @@ while True: # should be the while true loop
             pwm.duty_u16(duty) # Send the output of the PI controller out as PWM
 
         else:
-            v_err_int = 0
-            pwm_out = 30000
+            v_err_int = 0  # If integral error goes unbounded and disrupts the normal function, reset 
+            pwm_out = 30000 # Now start to track voltage again around halfway
 
 
         count = count + 1
         timer_elapsed = 0
         # current tracking idea for changing duty cycle to keep v constant and current minimal
         
-        #tosend = myclient('192.168.43.86',5001)
+        
         # This set of prints executes every 100 loops by default and can be used to output debug or extra info over USB enable or disable lines as needed
         if count>100:
             tosend = myclient('192.168.43.86', 5001)
@@ -273,7 +273,7 @@ while True: # should be the while true loop
             count = 0
             
             
-        #tosend.close()
+        
 
 
 
