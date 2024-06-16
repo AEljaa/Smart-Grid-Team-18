@@ -57,7 +57,7 @@ class MyServer:
                 if self.mydatain in ["LED1", "LED2", "LED3", "LED4"]:
                     currentdemand= int(helper.return_demand())
                     playroom=4-int(currentdemand)
-                    self.mydataout=helper.deferablehell(playroom)#tick, deferable list need added
+                    self.mydataout=helper.greedyDeferable(playroom)#tick, deferable list need added
                     print(int(self.mydataout))
                     conn.send(str(self.mydataout).encode())
                     print("Sent LED:", float(self.mydataout))
@@ -75,7 +75,7 @@ class MyServer:
                     print("Revieved from Storage:", str(self.mydatain))
                     send_cap_data_to_flask(self.mydatain)
                     if self.mydatain!="0": #if we have no enge
-                        algoout=helper.algorithm(46- float(self.mydatain))
+                        algoout=helper.energyAlgorithm(46- float(self.mydatain))
                         self.mydataout=str(algoout)
                         conn.send(str(self.mydataout).encode())
                         print("Sent Storage:", str(self.mydataout))

@@ -32,7 +32,7 @@ def naive_algorithm(price,yesterday_list):
     else:
         print("SELL")
 
-def algorithm(MaxAmount):    
+def energyAlgorithm(MaxAmount):    
     input,_,_,_,_,_=fetch_latest()
     predicted_prices=model.predict(input)
     test_list=predicted_prices[0]
@@ -59,7 +59,7 @@ def return_demand():
     return demand
 
 
-def deferablehell(freepower):
+def greedyDeferable(freepower):
     source = requests.get(url).json()
     demand = source['demand']
     tick = source['tick']
