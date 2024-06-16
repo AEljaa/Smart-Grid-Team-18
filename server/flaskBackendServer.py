@@ -20,10 +20,10 @@ def cleanData(data):
         tick.append(item["tick"])
     return buyHist, demandHist, sellHist, tick
 def cleanDef(data):
-    retArr=[]
-    for item in data:
-        retArr.append([item['end'],item['energy'],item['start']])
-    return retArr
+    dic={}
+    for index, item in enumerate(data):
+        dic[index] =[item['end'],item['energy'],item['start']]
+    return dic
     
 app = Flask(__name__)
 CORS(app)  # This will prevent the annoying CORS errors we get whenever we access the server
