@@ -7,7 +7,7 @@ url="http://127.0.0.1:4000/helper" #from our flask api
 #model = joblib.load("ml.pkl")
 model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithreadserver\ml.pkl")
 
-fname="jsondb.json" #our json database, if it doesnt exist, it gets made
+fname="deferable_db.json" #our json database, if it doesnt exist, it gets made
 def loaddeferable():
     source = requests.get(url).json()
     demand = source['demand']
