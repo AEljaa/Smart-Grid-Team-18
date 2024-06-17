@@ -94,9 +94,6 @@ def send_helper_data():
         current_sell_price = current_data['sell_price']  
         tick= current_data['tick']
     
-        yesterday_response = requests.get('https://icelec50015.azurewebsites.net/yesterday')
-        yesterday_data = yesterday_response.json()
-        _, _, yesterday_sell_prices, _ = cleanData(yesterday_data)
 
         demand_response = requests.get('https://icelec50015.azurewebsites.net/demand')
         demand_data=demand_response.json()
@@ -117,7 +114,6 @@ def send_helper_data():
 
         return jsonify({
             'current_sell_price': current_sell_price,
-            'yesterday_sell_prices': yesterday_sell_prices,
             'demand' : demand_data['demand'],
             'lags' : last_three_sell_prices,
             'tick': tick,
@@ -136,7 +132,7 @@ def receive_grid_data():
         grid_data = received_data
         response = requests.get('https://icelec50015.azurewebsites.net/price')
         tick = response.json()["tick"]
-        grid_graph_data[tick]=int(grid_data)
+        grid_graph_data[tick]=grid_data
         grid_graph_data[tick+1:]=len(grid_graph_data[tick+1:])*[0]
  
 
@@ -153,6 +149,7 @@ def forward_grid_data():
         response = requests.get('https://icelec50015.azurewebsites.net/price')
         buyprice = response.json()["buy_price"]
         sellprice = response.json()["sell_price"]
+        print("In forward grid data sending", grid_data, "type is ", type(grid_data))
         if(int(grid_data)>0):
             profit -= abs(int(grid_data)*sellprice)
         if(int(grid_data)<0):
@@ -202,6 +199,7 @@ def forward_cap_data():
     try:
         # Check if data is stored
         if cap_data:
+            print("In forward cap data sending", cap_data, "type is ", type(cap_data))
             return jsonify(cap_data), 200
         else:
             return jsonify({'message': 'No data available'}), 404
