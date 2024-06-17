@@ -8,7 +8,7 @@ def send_cap_data_to_flask(data):
     try:
         url = 'http://localhost:4000/send_cap_data'  
         headers = {'Content-Type': 'application/json'}
-        response = requests.post(url, headers=headers, json=data)
+        response = requests.post(url, headers=headers, json=float(data))
         if response.status_code == 200:
             print('Data sent successfully to Flask backend')
         else:
@@ -19,7 +19,7 @@ def send_grid_data_to_flask(data):
     try:
         url = 'http://localhost:4000/send_grid_data'  
         headers = {'Content-Type': 'application/json'}
-        response = requests.post(url, headers=headers, json=data)
+        response = requests.post(url, headers=headers, json=float(data))
         if response.status_code == 200:
             print('Data sent successfully to Flask backend')
         else:
@@ -55,9 +55,7 @@ class MyServer:
                 print("Sent:", str(self.mydataout))
 
                 if self.mydatain in ["LED1", "LED2", "LED3", "LED4"]:
-                    currentdemand= int(helper.return_demand())
-                    playroom=4-int(currentdemand)
-                    self.mydataout=helper.greedyDeferable(playroom)#tick, deferable list need added
+                    self.mydataout=helper.greedyDeferable()#tick, deferable list need added
                     print(int(self.mydataout))
                     conn.send(str(self.mydataout).encode())
                     print("Sent LED:", float(self.mydataout))
@@ -78,11 +76,11 @@ class MyServer:
                         algoout=helper.energyAlgorithm(46- float(self.mydatain))
                         self.mydataout=str(algoout)
                         conn.send(str(self.mydataout).encode())
-                        print("Sent Storage:", str(self.mydataout))
+                        print("Sent Storage:", float(self.mydataout))
                     else:
-                        self.mydataout=str(algoout)
+                        self.mydataout=float(0)
                         conn.send(self.mydataout.encode())
-                        print("Sent Storage:", str(self.mydataout))
+                        print("Sent Storage:", float(self.mydataout))
 
                 elif self.mydatain == "PV":
                     self.currentengmade = float(conn.recv(1024).decode())
@@ -90,8 +88,6 @@ class MyServer:
                     self.mydataout = str(helper.return_irradiance())
                     conn.send(self.mydataout.encode())
                     print("Sent PV:", str(self.mydataout))
-
-
 
                 else:
                     self.mydataout = "sorry, you are not recognized"
@@ -121,7 +117,7 @@ class MyServer:
         self.mySocket.close()
 
 if __name__ == "__main__":
-    server = MyServer('192.168.43.86', 5001)
+    server = MyServer('192.168.203.234', 5001)
     server_thread = threading.Thread(target=server.start, daemon=True)
     server_thread.start()
 
