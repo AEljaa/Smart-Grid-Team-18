@@ -85,6 +85,8 @@ def return_demand():
     _,_,_,_,demand,_=fetch_latest()
     return demand
 
+ourtick = 0
+ourvalue = 4
 
 def greedyDeferable(freepower):
     demand,tick,deferablelist=loaddeferable()
@@ -94,26 +96,31 @@ def greedyDeferable(freepower):
     if not deferablelist:
         print("All deferables are processed list is empty")
         return demand # no more, just do demand
-    for key,deferable in data.items():
-        if deferable[2] <= tick:
-           ratiolist[int(key)]=(deferable[1] / (deferable[0]-deferable[2]))
-    max=0
-    postion=0
-    #if deferable now at 0, remove
-    for i in range (0, len(ratiolist)):
-        if ratiolist[i]>= max:
-            postion=i
-            max=ratiolist[i]
-    
-    
-    if deferablelist[str(postion)][1]-5*freepower >=0: #We maximise how much of the deferable we do - take this away from the amount we are storing 
-        deferablelist[str(postion)][1]=deferablelist[str(postion)][1]-5*freepower
-        print("Deferable at",deferablelist[str(postion)], "has ", deferablelist[str(postion)][1] )
-        cleanandsave(data)
-        return 4 #tell load to max out since we are maximising with greedy algo
+    if ourtick !=tick:
+        for key,deferable in data.items():
+            if deferable[2] <= tick:
+            ratiolist[int(key)]=(deferable[1] / (deferable[0]-deferable[2]))
+        max=0
+        postion=0
+        #if deferable now at 0, remove
+        for i in range (0, len(ratiolist)):
+            if ratiolist[i]>= max:
+                postion=i
+                max=ratiolist[i]
+          
+        if deferablelist[str(postion)][1]-5*freepower >=0: #We maximise how much of the deferable we do - take this away from the amount we are storing 
+            deferablelist[str(postion)][1]=deferablelist[str(postion)][1]-5*freepower
+            print("Deferable at",deferablelist[str(postion)], "has ", deferablelist[str(postion)][1] )
+            cleanandsave(data)
+            global ourtick=tick
+            global ourvalue=4
+            return 4 #tell load to max out since we are maximising with greedy algo
+        else:
+            deferablelist[str(postion)][1]=deferablelist[str(postion)][1]-5*freepower #if there is less deferable energy than the free room, then dont use all free room, just do deferable amount + demand
+            print("Deferable at",deferablelist[str(postion)], "has ", deferablelist[str(postion)][1] )
+            cleanandsave(data)
+            global ourtick=tick
+            global ourvalue=(deferablelist[postion][1]/5)+demand
+            return (deferablelist[postion][1]/5)+demand #deferable value is in Joules so we need to convert it back to power by dividing by 5
     else:
-        deferablelist[str(postion)][1]=deferablelist[str(postion)][1]-5*freepower #if there is less deferable energy than the free room, then dont use all free room, just do deferable amount + demand
-        print("Deferable at",deferablelist[str(postion)], "has ", deferablelist[str(postion)][1] )
-        cleanandsave(data)
-        return (deferablelist[postion][1]/5)+demand #deferable value is in Joules so we need to convert it back to power by dividing by 5
-        
+        return ourvalue
