@@ -56,21 +56,26 @@ class MyServer:
                 elif self.mydatain == "Storage":
                     self.mydatain = conn.recv(1024).decode()
                     print("Received:", str(self.mydatain))
-                    if self.mydatain!="0": #if we have no enge
-                        algoout=helper.algorithm(46- float(self.mydatain))
-                        self.mydataout=str(algoout)
+                    
+                    algoout=helper.algorithm(46- float(self.mydatain))
+                    if algoout <=0 and float(self.mydatain) <= 1:
+                        self.mydataout=str("0")
                         conn.send(self.mydataout.encode())
                         print("Sent:", str(self.mydataout))
                     else:
-                        self.mydataout=str(0)
+                        self.mydataout=str(algoout)
                         conn.send(self.mydataout.encode())
                         print("Sent:", str(self.mydataout))
+                elif self.mydatain=="ECappa":
+                     float(conn.recv(1024).decode())
+
                 elif self.mydatain == "PV":
                     self.currentengmade = float(conn.recv(1024).decode())
                     print(self.currentengmade)
                     self.mydataout = str(helper.return_irradiance())
                     conn.send(self.mydataout.encode())
                     print("Sent:", str(self.mydataout))
+
 
 
                 else:
@@ -101,7 +106,7 @@ class MyServer:
         self.mySocket.close()
 
 if __name__ == "__main__":
-    server = MyServer('0.0.0.0', 5001)
+    server = MyServer('192.168.1.223', 5001)
     server_thread = threading.Thread(target=server.start, daemon=True)
     server_thread.start()
 

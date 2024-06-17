@@ -6,7 +6,8 @@ import time
 
 import time
 import socket
-import threading       
+import threading
+
 
 
 
@@ -20,14 +21,16 @@ class myclient():
         self.stop = False
         self.mydataout = ""
         self.mydatain = ""
-        self.psetpoint=0
+        self.psetpoint= 0
+        self.success = 0
         try: 
             #while not self.stop:
                 print("Connecting to",self.host,self.port)
                 print("1")
                 self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 print("2")
-                self.mySocket.connect((self.host,self.port))        
+                self.mySocket.connect((self.host,self.port))
+                self.success = 1
                 print("4")
         except KeyboardInterrupt:
                 print("Quitting")
@@ -65,7 +68,7 @@ class myclient():
         
                 
                 
-
+#WIFI Connection
 SSID = 'Sophie'
 PASSWORD = 'EEE123EEE'
 def connectwifi (ssid, password):
@@ -93,7 +96,7 @@ pwm = PWM(Pin(0))
 pwm.freq(100000)
 pwm_en = Pin(1, Pin.OUT)
 
-pid = PID(0.2, 10, 0, setpoint=0.3, scale='ms')
+pid = PID(0.02, 5, 0, setpoint=0.3, scale='ms')
 
 
 Psetpoint = 0.5
@@ -103,6 +106,9 @@ pwm_ref = 0
 setpoint = 0.0
 delta = 0.05
 
+attempt = True
+failcount = 0
+
 def saturate(duty):
     if duty > 62500:
         duty = 62500
@@ -110,7 +116,7 @@ def saturate(duty):
         duty = 100
     return duty
 
-for i in range (0,100):
+while attempt:
     pwm_en.value(1)
 
     vin = 1.026*(12490/2490)*3.3*(vin_pin.read_u16()/65536) # calibration factor * potential divider ratio * ref voltage * digital reading
@@ -132,16 +138,20 @@ for i in range (0,100):
         sender.start()"""
         #Server IP
         try:
-            sender=myclient('146.169.219.119',5001)
-            sender.senddata(str("LED4"))
-            sender.close()
-        
-            if Psetpoint != sender.psetpoint:
-                Psetpoint = sender.psetpoint
-                print("Received:",Psetpoint)
+            if failcount < 100:
+                #server IP in quotes
+                sender=myclient('146.169.252.111',5001)
+                sender.senddata(str("LED4"))
+                sender.close()
             
-            Power = float(Psetpoint) 
-            
+                if Psetpoint != sender.psetpoint:
+                    Psetpoint = sender.psetpoint
+                    print("Received:",Psetpoint)
+                
+                Power = float(Psetpoint) 
+            else:
+                Power = 1.5
+                
             print("Vin = {:.3f}".format(vin))
             print("Vout = {:.3f}".format(vout))
             print("Vret = {:.3f}".format(vret))
@@ -161,9 +171,16 @@ for i in range (0,100):
                 
             pid.setpoint = setpoint
             
+            if sender.success == 1:
+                faicount = 0
+            
+            
     
         except:
             print("Connection Failed")
+            failcount =+ 1
+                
+                
         finally:
             sender.close()
 
