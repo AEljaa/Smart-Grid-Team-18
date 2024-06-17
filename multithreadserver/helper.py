@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 import joblib
 url="http://127.0.0.1:4000/helper" #from our flask api
-#model = joblib.load("ml.pkl")
-model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithreadserver\ml.pkl")
+model = joblib.load("ml.pkl")
+#model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithreadserver\ml.pkl")
 
 fname="deferable_db.json" #our json database, if it doesnt exist, it gets made
 def loaddeferable():
@@ -88,20 +88,23 @@ def return_demand():
 ourtick = 0
 ourvalue = 4
 
-def greedyDeferable(freepower):
+def greedyDeferable():
     demand,tick,deferablelist=loaddeferable()
     ratiolist=[0]*3
+    freepower=4-demand
     global ourtick
     global ourvalue
+    print("OURTICK",ourtick, "CURRENTTICK",tick)
     data=deferablelist
     # Check if deferablelist is empty and return early
     if not deferablelist:
         print("All deferables are processed list is empty")
         return demand # no more, just do demand
     if ourtick !=tick:
+        print("Current tick is not equal to rick")
         for key,deferable in data.items():
             if deferable[2] <= tick:
-            ratiolist[int(key)]=(deferable[1] / (deferable[0]-deferable[2]))
+                ratiolist[int(key)]=(deferable[1] / (deferable[0]-deferable[2]))
         max=0
         postion=0
         #if deferable now at 0, remove
@@ -126,4 +129,5 @@ def greedyDeferable(freepower):
             ourvalue=(deferablelist[postion][1]/5)+demand
             return (deferablelist[postion][1]/5)+demand #deferable value is in Joules so we need to convert it back to power by dividing by 5
     else:
+        print("LED is on same tick")
         return ourvalue
