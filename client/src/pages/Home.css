@@ -3,27 +3,27 @@
   }
   
   .scroll-wrapper {
-    overflow-x: auto; /* Enable horizontal scrolling */
-    width: 100%; /* Allow the wrapper to take full width */
-    position: sticky; /* Keep the wrapper fixed within the viewport */
-    top: 100px; /* Adjust as needed based on your layout */
+    overflow-x: auto; 
+    width: 100%; 
+    position: sticky; 
+    top: 100px; 
   }
 .container {
-    background-color: #150044; /* Dark background color */
-    padding-top: 60px; /* Adjust padding to accommodate navbar height */
+    background-color: #150044; 
+    padding-top: 60px; 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Ensure the content starts from the top */
-    min-height: 100vh; /* Ensure the container takes full height */
-    width: 100%; /* Ensure the container takes full width */
+    justify-content: flex-start; 
+    min-height: 100vh; 
+    width: 100%; 
   }
   
   .content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 40px; /* Additional padding to ensure content is not hidden behind the navbar */
+    padding-top: 40px; 
   }
   
   .title {
@@ -42,14 +42,14 @@
 
   
   .text-box {
-    margin: 0 10px; /* Add margin horizontally between text boxes */
+    margin: 0 10px; 
     background-color: #0D002D;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
     box-shadow: 0px 0px 10px #150345;
-    min-width: 220px; /* Adjust the minimum width as needed */
-    white-space: normal; /* Allow text to wrap within the text box */
+    min-width: 220px; 
+    white-space: normal; 
 }
 
   

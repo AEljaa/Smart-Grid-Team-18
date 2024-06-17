@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar';
 import './Home.css';
@@ -7,30 +8,39 @@ export default function Home() {
   const [sunIntensity, setSunIntensity] = useState(0);
   const [buyPrice, setBuyPrice] = useState(0);
   const [sellPrice, setSellPrice] = useState(0);
+  const [currImp, setCurrImp] = useState(0);
+  const [currExp, setCurrExp] = useState(0);
   const [demand, setDemand] = useState(0);
-  const [GeneratedPow,setGen] = useState(0);
-  const [StoredPow,setStor] = useState(0);
+  const [storedEnergy, setStoredEnergy] = useState(0); 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let response = await fetch("http://127.0.0.1:4000/sun");
-        let sunData = await response.json();
-        setSunIntensity(sunData.sun);
+        let startTime = performance.now();
 
-        response = await fetch("http://127.0.0.1:4000/price");
-        let priceData = await response.json();
-        setBuyPrice(priceData.buy_price);
-        setSellPrice(priceData.sell_price);
+        let response = await fetch("http://127.0.0.1:4000/webdata")
+        let webData= await response.json()
 
-        response = await fetch("http://127.0.0.1:4000/demand");
-        let demandData = await response.json();
-        setDemand(demandData.demand);
-        
-        response = await fetch("http://127.0.0.1:4000/forward_data")
+        setSunIntensity(webData.sun);
+        setBuyPrice(webData.buy_price);
+        setSellPrice(webData.sell_price);
+        setDemand(webData.demand);
+
+        response = await fetch("http://127.0.0.1:4000/forward_cap_data")
+        let capData= await response.json()
+        console.log(capData)
+
+        setStoredEnergy(capData.message != "No data available" ? capData : 0); 
+
+        response = await fetch("http://127.0.0.1:4000/forward_grid_data")
         let gridData = await response.json()
-        setGen(gridData.Generated)
-        setStor(gridData.Stored)
+       
+        setCurrImp(gridData.value > 0 ? gridData.value : 0);// if value form grid is positive then imported
+        setCurrExp(gridData.value < 0 ? gridData.value : 0); // if negative then we exported
+        console.log(gridData)
 
+        let endTime = performance.now();
+        console.log(`Duration: ${endTime - startTime}ms`);
       } catch (error) {
         console.error(error);
       }
@@ -40,7 +50,7 @@ export default function Home() {
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, []);
-  return (
+   return (
     <div className="container">
       <NavBar />
       <div className="content">
@@ -55,6 +65,14 @@ export default function Home() {
               <h2 className="text-label">Instantaneous Demand </h2>
               <p className="text-value">{demand.toFixed(3)}W</p>
             </div>            
+           <div className="text-box">
+              <h2 className="text-label">Imported Energy Amount</h2>
+              <p className="text-value">{currImp}J</p>
+          </div>
+          <div className="text-box">
+              <h2 className="text-label">Exported Energy Amount</h2>
+              <p className="text-value">{currExp}J</p>
+          </div>
             <div className="text-box">
               <h2 className="text-label">External Sell Price Per Joule</h2>
               <p className="text-value">£{(sellPrice/100).toFixed(2)}</p>
@@ -63,17 +81,13 @@ export default function Home() {
               <h2 className="text-label">External Buy Price Per Joule</h2>
               <p className="text-value">£{(buyPrice/100).toFixed(2)}</p>
             </div>
-            <div className="text-box">
-              <h2 className="text-label">Generated Solar Power</h2>
-              <p className="text-value">{GeneratedPow}W</p>
-            </div>
-            <div className="text-box">
-              <h2 className="text-label">Stored Power</h2>
-              <p className="text-value">{StoredPow}W</p>
-            </div>
-          </div>
         </div>
-      </div>
+            <div className="text-box">
+              <h2 className="text-label">Current Stored Energy</h2>
+              <p className="text-value">{storedEnergy}J</p>
+        </div>
+        </div>
+    </div>
     </div>
   );
 }

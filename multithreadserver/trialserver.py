@@ -4,9 +4,20 @@ import threading
 import helper
 import json
 import requests
-def send_data_to_flask(data):
+def send_cap_data_to_flask(data):
     try:
-        url = 'http://localhost:4000/send_data'  
+        url = 'http://localhost:4000/send_cap_data'  
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200:
+            print('Data sent successfully to Flask backend')
+        else:
+            print(f'Failed to send data. Status code: {response.status_code}')
+    except Exception as e:
+        print(f"Error sending data to Flask backend: {e}")
+def send_grid_data_to_flask(data):
+    try:
+        url = 'http://localhost:4000/send_grid_data'  
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 200:
@@ -44,44 +55,48 @@ class MyServer:
                 print("Sent:", str(self.mydataout))
 
                 if self.mydatain in ["LED1", "LED2", "LED3", "LED4"]:
-                    currentdemand= str(helper.return_demand())
+                    currentdemand= int(helper.return_demand())
                     playroom=4-int(currentdemand)
-                    self.mydataout=helper.deferablehell(playroom)#tick, deferable list need added
-                    conn.send(self.mydataout.encode())
-                    print("Sent:", str(self.mydataout))
+                    self.mydataout=helper.greedyDeferable(playroom)#tick, deferable list need added
+                    print(int(self.mydataout))
+                    conn.send(str(self.mydataout).encode())
+                    print("Sent LED:", float(self.mydataout))
+
                 elif self.mydatain == "Grid":
                     self.mydatain = conn.recv(1024).decode()
                     #FIND WHAT MEAN KIN MONEY TERMS AND GO ON WEB
-                    send_data_to_flask(self.mydatain)
+                    ## if power positive then you are buying if negative then selling expect in joules
+                    send_grid_data_to_flask(self.mydatain)
+                    print("Received from Grid:", str(self.mydatain))
+                    conn.send(str("GRID").encode())
+
                 elif self.mydatain == "Storage":
                     self.mydatain = conn.recv(1024).decode()
-                    print("Received:", str(self.mydatain))
-                    
-                    algoout=helper.algorithm(46- float(self.mydatain))
-                    if algoout <=0 and float(self.mydatain) <= 1:
-                        self.mydataout=str("0")
-                        conn.send(self.mydataout.encode())
-                        print("Sent:", str(self.mydataout))
+                    print("Revieved from Storage:", str(self.mydatain))
+                    send_cap_data_to_flask(self.mydatain)
+                    if self.mydatain!="0": #if we have no enge
+                        algoout=helper.energyAlgorithm(46- float(self.mydatain))
+                        self.mydataout=str(algoout)
+                        conn.send(str(self.mydataout).encode())
+                        print("Sent Storage:", str(self.mydataout))
                     else:
                         self.mydataout=str(algoout)
                         conn.send(self.mydataout.encode())
-                        print("Sent:", str(self.mydataout))
-                elif self.mydatain=="ECappa":
-                     float(conn.recv(1024).decode())
+                        print("Sent Storage:", str(self.mydataout))
 
                 elif self.mydatain == "PV":
                     self.currentengmade = float(conn.recv(1024).decode())
                     print(self.currentengmade)
                     self.mydataout = str(helper.return_irradiance())
                     conn.send(self.mydataout.encode())
-                    print("Sent:", str(self.mydataout))
+                    print("Sent PV:", str(self.mydataout))
 
 
 
                 else:
                     self.mydataout = "sorry, you are not recognized"
                     conn.send(self.mydataout.encode())
-                    print("Sent:", str(self.mydataout))
+                    print("Sent PV:", str(self.mydataout))
         except Exception as e:
             print("Error:", e)
         finally:
@@ -106,7 +121,7 @@ class MyServer:
         self.mySocket.close()
 
 if __name__ == "__main__":
-    server = MyServer('192.168.1.223', 5001)
+    server = MyServer('192.168.43.86', 5001)
     server_thread = threading.Thread(target=server.start, daemon=True)
     server_thread.start()
 
