@@ -91,6 +91,8 @@ ourvalue = 4
 def greedyDeferable(freepower):
     demand,tick,deferablelist=loaddeferable()
     ratiolist=[0]*3
+    global ourtick
+    global ourvalue
     data=deferablelist
     # Check if deferablelist is empty and return early
     if not deferablelist:
@@ -112,15 +114,16 @@ def greedyDeferable(freepower):
             deferablelist[str(postion)][1]=deferablelist[str(postion)][1]-5*freepower
             print("Deferable at",deferablelist[str(postion)], "has ", deferablelist[str(postion)][1] )
             cleanandsave(data)
-            global ourtick=tick
-            global ourvalue=4
+            ourtick=tick
+            ourvalue=4
+            
             return 4 #tell load to max out since we are maximising with greedy algo
         else:
             deferablelist[str(postion)][1]=deferablelist[str(postion)][1]-5*freepower #if there is less deferable energy than the free room, then dont use all free room, just do deferable amount + demand
             print("Deferable at",deferablelist[str(postion)], "has ", deferablelist[str(postion)][1] )
             cleanandsave(data)
-            global ourtick=tick
-            global ourvalue=(deferablelist[postion][1]/5)+demand
+            ourtick=tick
+            ourvalue=(deferablelist[postion][1]/5)+demand
             return (deferablelist[postion][1]/5)+demand #deferable value is in Joules so we need to convert it back to power by dividing by 5
     else:
         return ourvalue
