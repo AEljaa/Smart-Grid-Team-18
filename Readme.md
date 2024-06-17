@@ -25,7 +25,9 @@ Firstly:
 
 Secondly run the command `cd server` and run `python3 flaskBackendServer.py` now open another terminal and go back to the root of the project.
 
-Lastly run  the command `cd multithreadserver ` and run the command  `python3 trialserver.py` TODO CHANGE FILE NAMES
+Thirdly run  the command `cd multithreadserver ` and run the command  `python3 trialserver.py`. 
+
+Lastly run the commands `cd client`, then run `npm install` and finally run `npm start` to start the webpage.
 
 ## Contribution Table
 
