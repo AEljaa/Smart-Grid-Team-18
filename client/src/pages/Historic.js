@@ -48,8 +48,8 @@ export default function Historic() {
               label: 'Energy Imported (+ve), Energy Exported (-ve) (Joules)',
               data: gridData,
               fill: true,
-              backgroundColor: 'rgba(75,192,192,0.4)',
-              borderColor: 'rgba(75,192,192,1)',
+              backgroundColor: 'rgba(153,102,255,0.4)',
+              borderColor: 'rgba(153,102,255,1)',
             }
           ] 
         };
@@ -62,8 +62,8 @@ export default function Historic() {
               label: 'Stored Energy in Capacitor (Joules)',
               data: capData,
               fill: true,
-              backgroundColor: 'rgba(75,192,192,0.4)',
-              borderColor: 'rgba(75,192,192,1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.4)',
+              borderColor: 'rgba(255, 99, 132, 1)',
             }
           ] 
         };
