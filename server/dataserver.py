@@ -61,7 +61,7 @@ class MyServer:
                     print("Sent LED:", float(self.mydataout))
 
                 elif self.mydatain == "Grid":
-                    self.mydatain = conn.recv(1024).decode()
+                    self.mydatain = conn.recv(1024).decode() #this is a string
                     #FIND WHAT MEAN KIN MONEY TERMS AND GO ON WEB
                     ## if power positive then you are buying if negative then selling expect in joules
                     send_grid_data_to_flask(self.mydatain)
@@ -69,16 +69,16 @@ class MyServer:
                     conn.send(str("GRID").encode())
 
                 elif self.mydatain == "Storage":
-                    self.mydatain = conn.recv(1024).decode()
+                    self.mydatain = conn.recv(1024).decode() #string
                     print("Revieved from Storage:", str(self.mydatain))
                     send_cap_data_to_flask(self.mydatain)
                     if self.mydatain!="0": #if we have no enge
-                        algoout=helper.energyAlgorithm(46- float(self.mydatain))
+                        algoout=helper.energyAlgorithm(float(self.mydatain))
                         self.mydataout=str(algoout)
-                        conn.send(str(self.mydataout).encode())
+                        conn.send(self.mydataout.encode())
                         print("Sent Storage:", float(self.mydataout))
                     else:
-                        self.mydataout=float(0)
+                        self.mydataout="0"
                         conn.send(self.mydataout.encode())
                         print("Sent Storage:", float(self.mydataout))
 
@@ -117,7 +117,7 @@ class MyServer:
         self.mySocket.close()
 
 if __name__ == "__main__":
-    server = MyServer('192.168.203.234', 5001)
+    server = MyServer('192.168.43.86', 5001)
     server_thread = threading.Thread(target=server.start, daemon=True)
     server_thread.start()
 
