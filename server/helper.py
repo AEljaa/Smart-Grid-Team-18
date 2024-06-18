@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 import joblib
 url="http://127.0.0.1:4000/helper" #from our flask api
-model = joblib.load("ml.pkl")
-#model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithreadserver\ml.pkl")
-fname="../db/deferable_db.json" #our json database, if it doesnt exist, it gets made
+#model = joblib.load("ml.pkl")
+model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithreadserver\ml.pkl")
 
+fname="deferable_db.json" #our json database, if it doesnt exist, it gets made
 def loaddeferable():
     source = requests.get(url).json()
     demand = source['demand']
@@ -32,7 +32,7 @@ def cleanandsave(data):
         print(f"Removing {data[key]} as value is <=0")
         del data[key]    
 
-    with open('deferable_db.json', 'w') as f:
+    with open('jsondb.json', 'w') as f:
         json.dump(data, f)
 
 def fetch_latest():
@@ -59,7 +59,7 @@ def naive_algorithm(price,yesterday_list):
     else:
         print("SELL")
 
-def energyAlgorithm(MaxAmount):    
+def energyAlgorithm(currAmount):    
     input,_,_,_,_,_=fetch_latest()
     predicted_prices=model.predict(input)
     test_list=predicted_prices[0]
@@ -68,12 +68,11 @@ def energyAlgorithm(MaxAmount):
     ratio=return_demand()/5
     res=0
     decr = np.array_equal(test_list, sorted(test_list, reverse=True))
-    incr = all(i < j for i, j in zip(predicted_prices[0], predicted_prices[0][1:]) #if pred array increases the nprice trending up, buy
-
+    incr = all(i < j for i, j in zip(predicted_prices[0], predicted_prices[0][1:]))#https://www.geeksforgeeks.org/python-check-if-list-is-strictly-increasing/  if pred array increases the nprice trending up, buy
     if(decr):
-        res=(46-MaxAmount)*ratio*-1
+        res=currAmount*ratio*-1 #sell 
     if incr:
-        res=MaxAmount*(1-ratio)
+        res=(45-currAmount)*(1-ratio) #buy
     return res
 
 
