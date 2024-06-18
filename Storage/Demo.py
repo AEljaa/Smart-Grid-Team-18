@@ -53,10 +53,12 @@ class myclient():
             self.mydataout=str(number)
             self.mySocket.send(self.mydataout.encode())
             print("Sent:",self.mydataout)
-            self.mydatain = self.mySocket.recv(1024).decode()
-            print("Received:",self.mydatain)
             
-            self.finaldeng=self.mydatain
+            if datatosend == "Storage":
+                self.mydatain = self.mySocket.recv(1024).decode()
+                print("Received:",self.mydatain)
+            
+                self.finaldeng=self.mydatain
         else:
             print("Data error")
     def close(self):
@@ -65,8 +67,8 @@ class myclient():
                    
                 
 
-SSID = 'sus'
-PASSWORD = 'suspassword'
+SSID = 'WompWomp'
+PASSWORD = '12345678'
 def connectwifi (ssid, password):
 
     wlan = network.WLAN(network.STA_IF)
@@ -90,6 +92,7 @@ prev_DEnergy=0
 OEnergy= 0
 prev_vc = 0
 DEnergy= float(20)
+
 OL_CL_pin = Pin(12, Pin.IN, Pin.PULL_UP)
 BU_BO_pin = Pin(2, Pin.IN, Pin.PULL_UP)
 
@@ -207,7 +210,7 @@ while True:
 
              
         #OEnergy = saturate (float(DEnergy) + prev_DEnergy, 49,0) #Runninf total of Energy
-        OEnergy = float(DEnergy) + prev_DEnergy
+        OEnergy = float(DEnergy)+ prev_DEnergy
         #prev_DEnergy = OEnergy
     
     
@@ -234,11 +237,11 @@ while True:
         pwm_out = saturate(i_pi_out,max_pwm,min_pwm) # Saturate that PI output
         duty = int(65536-pwm_out) # Invert because reasons
         pwm.duty_u16(duty)
-        
-        
-        
- 
-        
+        """
+        sender=myclient("192.168.207.234",5001)
+        sender.senddata("ECapa",ECapa)
+        sender.close()
+        """
         
                
             
@@ -252,8 +255,8 @@ while True:
             
             if vb > vc:
                 vpot = 1.66
-                sender=myclient("192.168.43.86",5001)
-                sender.senddata("Storage",ECapa)
+                sender=myclient("192.168.207.234",5001)
+                sender.senddata("Storage",str(ECapa))
                 DEnergy = sender.finaldeng
                 sender.close()
                 
@@ -270,8 +273,8 @@ while True:
             if vb < vc:
                 vpot = 1.66
                 
-                sender=myclient("192.168.43.86",5001)
-                sender.senddata("Storage",ECapa)
+                sender=myclient("192.168.207.234",5001)
+                sender.senddata("Storage",str(ECapa))
                 DEnergy = sender.finaldeng
                 sender.close()
                 
