@@ -7,7 +7,7 @@ url="http://127.0.0.1:4000/helper" #from our flask api
 #model = joblib.load("ml.pkl")
 model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithreadserver\ml.pkl")
 
-fname="deferable_db.json" #our json database, if it doesnt exist, it gets made
+fname="../db/deferable_db.json" #our json database, if it doesnt exist, it gets made
 def loaddeferable():
     source = requests.get(url).json()
     demand = source['demand']
@@ -32,7 +32,7 @@ def cleanandsave(data):
         print(f"Removing {data[key]} as value is <=0")
         del data[key]    
 
-    with open('jsondb.json', 'w') as f:
+    with open(fname, 'w') as f:
         json.dump(data, f)
 
 def fetch_latest():
