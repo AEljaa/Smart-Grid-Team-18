@@ -58,7 +58,7 @@ class myclient():
                 self.mydatain = self.mySocket.recv(1024).decode()
                 print("Received:",self.mydatain)
             
-                self.finaldeng=self.mydatain
+                self.finaldeng=float(self.mydatain)
         else:
             print("Data error")
     def close(self):
@@ -67,8 +67,8 @@ class myclient():
                    
                 
 
-SSID = 'WompWomp'
-PASSWORD = '12345678'
+SSID = 'sus'
+PASSWORD = 'suspassword'
 def connectwifi (ssid, password):
 
     wlan = network.WLAN(network.STA_IF)
@@ -237,12 +237,9 @@ while True:
         pwm_out = saturate(i_pi_out,max_pwm,min_pwm) # Saturate that PI output
         duty = int(65536-pwm_out) # Invert because reasons
         pwm.duty_u16(duty)
-        """
-        sender=myclient("192.168.207.234",5001)
-        sender.senddata("ECapa",ECapa)
-        sender.close()
-        """
+      
         
+        #sender=myclient("192.168.43.86",5001)
                
             
         if float(DEnergy) >= float(0): #Charge by DEnergy amount
@@ -255,8 +252,8 @@ while True:
             
             if vb > vc:
                 vpot = 1.66
-                sender=myclient("192.168.207.234",5001)
-                sender.senddata("Storage",str(ECapa))
+                sender=myclient("192.168.43.86",5001)
+                sender.senddata("Storage",ECapa)
                 DEnergy = sender.finaldeng
                 sender.close()
                 
@@ -273,8 +270,8 @@ while True:
             if vb < vc:
                 vpot = 1.66
                 
-                sender=myclient("192.168.207.234",5001)
-                sender.senddata("Storage",str(ECapa))
+                sender=myclient("192.168.43.86",5001)
+                sender.senddata("Storage",ECapa)
                 DEnergy = sender.finaldeng
                 sender.close()
                 
