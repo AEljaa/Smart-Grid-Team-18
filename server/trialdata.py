@@ -47,28 +47,30 @@ class MyServer:
                 data_in = conn.recv(1024).decode()
                 if not data_in:
                     break
-                print("Received:", data_in)#
-                 conn.send(str(data_in).encode())
+                print("Received:", data_in)
 
                 if data_in in ["LED1", "LED2", "LED3", "LED4"]:
-                    data_out = helper.greedyDeferable()
-                    conn.send(str(data_out).encode())
-                    print("Sent LED:", data_out)
+                    try:
+                        data_out = helper.greedyDeferable()
+                        print(f"greedyDeferable() returned: {data_out}")
+                        conn.send(str(data_out).encode())
+                        print("Sent LED:", data_out)
+                    except Exception as e:
+                        print(f"Error processing LED command: {e}")
+                        conn.send("ERROR".encode())
 
                 elif data_in == "Grid":
-                    data_ing = conn.recv(1024).decode()
-                    print("here")
-                    send_grid_data_to_flask(data_ing)
-                    print("ended")
-                    print("Received from Grid:", data_ing)
+                    data_in = conn.recv(1024).decode()
+                    send_grid_data_to_flask(data_in)
+                    print("Received from Grid:", data_in)
                     conn.send("GRID".encode())
 
                 elif data_in == "Storage":
-                    data_ins = conn.recv(1024).decode()
-                    print("Received from Storage:", data_ins)
-                    send_cap_data_to_flask(data_ins)
-                    if data_ins != "0":
-                        algo_out = helper.energyAlgorithm(46 - float(data_ins))
+                    data_in = conn.recv(1024).decode()
+                    print("Received from Storage:", data_in)
+                    send_cap_data_to_flask(data_in)
+                    if data_in != "0":
+                        algo_out = helper.energyAlgorithm(46 - float(data_in))
                         conn.send(str(algo_out).encode())
                         print("Sent Storage:", algo_out)
                     else:
@@ -86,38 +88,4 @@ class MyServer:
                     conn.send(data_out.encode())
                     print("Sent:", data_out)
         except Exception as e:
-            print("Error:", e)
-        finally:
-            conn.close()
-            print("Disconnected:", str(addr))
-
-    def start(self):
-        self.mySocket.listen(5)
-        print(f"Server listening on {self.host}:{self.port}")
-        while not self.stop:
-            try:
-                conn, addr = self.mySocket.accept()
-                client_thread = threading.Thread(target=self.handle_client, args=(conn, addr))
-                client_thread.daemon = True
-                client_thread.start()
-            except KeyboardInterrupt:
-                print("Quitting")
-                self.stop = True
-            except Exception as e:
-                print("Error:", e)
-
-        self.mySocket.close()
-
-if __name__ == "__main__":
-    server = MyServer('192.168.203.234', 5001)
-    server_thread = threading.Thread(target=server.start, daemon=True)
-    server_thread.start()
-
-    # Keep the main thread running to catch keyboard interrupts
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("Server shutting down...")
-        server.stop = True
-        server_thread.join()
+            print("Error
