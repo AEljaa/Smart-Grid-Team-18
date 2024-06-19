@@ -61,8 +61,8 @@ class myclient():
                 
                 
 
-SSID = 'Sophie'
-PASSWORD = 'EEE123EEE'
+SSID = 'WompWomp'
+PASSWORD = '12345678'
 def connectwifi (ssid, password):
 
     wlan = network.WLAN(network.STA_IF)
@@ -232,7 +232,7 @@ while True:
         
         # This set of prints executes every 100 loops (every 0.2s)
         if count > 100:
-            sender=myclient("146.169.253.27",5001)
+            sender=myclient("192.168.207.234",5001)
             sender.senddata(str("PV"),str(pin))
             sender.close()
             print("{}".format(pin)) 

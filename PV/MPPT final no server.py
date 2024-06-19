@@ -3,7 +3,6 @@ import network
 import time
 import time
 import socket
-import threading
 
 # Basic signals to control logic flow
 global timer_elapsed
@@ -96,7 +95,7 @@ while True:
         i_err_int = 0 # Voltage error integral
         i_pi_out = 0 # Output of the voltage PI controller
         ki = 50 # Boost Integral Gain
-        step=0.001#Step size for p&o
+        step=0.0005#Step size for p&o
         prev_iin=0
         prev_pin=0
         isc=0
@@ -120,8 +119,8 @@ while True:
             isc=iin-0.02*vin 
             im=0.8972*isc+0.002 
         i_diff=im-iin
-#       if far from MPP shoot to MPP
-        if abs(i_diff)>=0.001:
+#       
+        if abs(i_diff)>=0.005:
             kp=20
             #agressive references used for speed
             if iin<im:
@@ -165,7 +164,6 @@ while True:
         timer_elapsed = 0
         
         # This set of prints executes every 100 loops (every 0.2s)
-        if count > 100:
-            print("{}".format(pin)) 
+        if count > 50:
+            print((pin)) 
             count = 0
-
