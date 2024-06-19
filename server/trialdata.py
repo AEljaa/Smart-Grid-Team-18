@@ -70,7 +70,7 @@ class MyServer:
                     print("Received from Storage:", data_in)
                     send_cap_data_to_flask(data_in)
                     if data_in != "0":
-                        algo_out = helper.energyAlgorithm(46 - float(data_in))
+                        algo_out = helper.energyAlgorithm(float(data_in))
                         conn.send(str(algo_out).encode())
                         print("Sent Storage:", algo_out)
                     else:
@@ -88,7 +88,7 @@ class MyServer:
                     conn.send(data_out.encode())
                     print("Sent:", data_out)
         except Exception as e:
-            print("Error": {e}")
+            print(f"Error {e}")
         finally:
             conn.close()
             print(f"Disconnected: {addr}")
@@ -111,7 +111,7 @@ class MyServer:
         self.mySocket.close()
 
 if __name__ == "__main__":
-    server = MyServer('192.168.203.234', 5001)
+    server = MyServer('192.168.43.86', 5001)
     server_thread = threading.Thread(target=server.start, daemon=True)
     server_thread.start()
 
