@@ -15,24 +15,33 @@ def loaddeferable():
     tick = source['tick']
     try:
         if tick != 0:
+
             with open(fname, 'r+b') as f:
-                deferablelist = json.load(f)
+                data = json.load(f)
+                filtered_data = {key: value for key, value in data.items() if key.isdigit()}
+                print(filtered_data)
+                ourtick = data.get('ourtick', 0)  # Get ourtick from the file, default to 0 if not found
+                deferablelist =filtered_data
                 print("File loaded, no API fetching")
-        else:
+        else: # tick is 0 our tick is 59
             deferablelist = source['deferables']
+            ourtick = 59
             print("Tick is 0, data fetched from API")
     except OSError:
         deferablelist = source['deferables']
+        ourtick = (tick -1) if tick !=0 else 59
         print("No file, data fetched from API")
-    return demand, tick, deferablelist
+    return demand, tick, deferablelist,ourtick
 
-def cleanandsave(data):
-    invalid_keys = [key for key, deferable in data.items() if deferable[1] <= 0]
+def cleanandsave(deferablelist,ourtick):
+    invalid_keys = [key for key, deferable in deferablelist.items() if deferable[1] <= 0]
     for key in invalid_keys:
-        print(f"Removing {data[key]} as value is <= 0")
-        del data[key]
+        print(f"Removing {deferablelist[key]} as value is <= 0")
+        del deferablelist[key]
+ #####
+    deferablelist['ourtick'] = ourtick  # Add ourtick to the data
     with open(fname, 'w') as f:
-        json.dump(data, f)
+        json.dump(deferablelist, f)
 
 def fetch_latest():
     source = requests.get(url).json()
@@ -81,49 +90,67 @@ def return_demand():
     _, _, _, _, demand, _ = fetch_latest()
     return demand
 
-ourtick = 0
 ourvalue = 4
 
+
 def greedyDeferable():
-    demand, tick, deferablelist = loaddeferable()
-    ratiolist = [0] * 3
-    freepower = 4 - demand
-    global ourtick
-    global ourvalue
-    print("OURTICK", ourtick, "CURRENTTICK", tick)
-    print("Demand:", demand, "Tick:", tick, "Deferable List:", deferablelist)
-    
+    demand, tick, deferablelist, ourtick = loaddeferable()
     if not deferablelist:
         print("All deferables are processed, list is empty")
-        return demand  # no more, just do demand
-    
+        return demand  # No more, just do demand
+
+    max_index = max(int(key) for key in deferablelist) if deferablelist else -1
+    ratiolist = [0] * (max_index + 1)
+    freepower = 4 - demand
+    global ourvalue
+
+    print("OURTICK", ourtick, "CURRENTTICK", tick)
+    print("Demand:", demand, "Tick:", tick, "Deferable List:", deferablelist)
+
     if ourtick != tick:
         print("Current tick is not equal to our tick")
         for key, deferable in deferablelist.items():
+            key_int = int(key)  # Convert key to integer
+            print(f"Processing deferable {key}: {deferable}")
             if deferable[2] <= tick:
-                ratiolist[int(key)] = (deferable[1] / (deferable[0] - deferable[2]))
+                ratiolist[key_int] = (deferable[1] / (deferable[0] - deferable[2]))
+                print(f"Ratio for deferable {key}: {ratiolist[key_int]}")
+
         max_ratio = 0
-        position = 0
-        
+        position = -1
+
         for i in range(len(ratiolist)):
             if ratiolist[i] >= max_ratio:
                 position = i
                 max_ratio = ratiolist[i]
-        
-        if deferablelist[str(position)][1] - 5 * freepower >= 0:  # Maximize how much of the deferable we do
-            deferablelist[str(position)][1] -= 5 * freepower
-            print("Deferable at", deferablelist[str(position)], "has", deferablelist[str(position)][1])
-            cleanandsave(deferablelist)
+
+        if position == -1:
+            # No valid position found
+            print("No valid deferable position found")
+            return demand
+
+        if (len(deferablelist) == 1):
             ourtick = tick
+            return demand  # No deferable
+
+        print(f"Selected deferable position: {position} with max ratio: {max_ratio}")
+        deferable_key = str(position)  # Convert position back to string to access deferablelist
+        if deferablelist[deferable_key][1] - 5 * freepower >= 0:  # Maximize how much of the deferable we do
+            deferablelist[deferable_key][1] -= 5 * freepower
+            print("Deferable at", deferablelist[deferable_key], "has", deferablelist[deferable_key][1])
+            ourtick = tick
+            cleanandsave(deferablelist, ourtick)
+            print("Assigning tick")
             ourvalue = 4
-            return 4  # tell load to max out since we are maximizing with greedy algo
+            return 4  # Tell load to max out since we are maximizing with greedy algo
         else:
-            deferablelist[str(position)][1] -= 5 * freepower  # if less deferable energy than free room, use deferable amount + demand
-            print("Deferable at", deferablelist[str(position)], "has", deferablelist[str(position)][1])
-            cleanandsave(deferablelist)
+            deferablelist[deferable_key][1] -= 5 * freepower  # If less deferable energy than free room, use deferable amount + demand
+            print("Deferable at", deferablelist[deferable_key], "has", deferablelist[deferable_key][1])
             ourtick = tick
-            ourvalue = (deferablelist[position][1] / 5) + demand
-            return (deferablelist[position][1] / 5) + demand  # convert deferable value back to power
+            cleanandsave(deferablelist, ourtick)
+            print("Assigning tick")
+            ourvalue = (deferablelist[deferable_key][1] / 5) + demand
+            return (deferablelist[deferable_key][1] / 5) + demand  # Convert deferable value back to power
     else:
         print("LED is on same tick")
         return ourvalue
