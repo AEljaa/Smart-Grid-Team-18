@@ -47,7 +47,8 @@ class MyServer:
                 data_in = conn.recv(1024).decode()
                 if not data_in:
                     break
-                print("Received:", data_in)
+                print("Received:", data_in)#
+                 conn.send(str(data_in).encode())
 
                 if data_in in ["LED1", "LED2", "LED3", "LED4"]:
                     data_out = helper.greedyDeferable()
@@ -55,17 +56,19 @@ class MyServer:
                     print("Sent LED:", data_out)
 
                 elif data_in == "Grid":
-                    data_in = conn.recv(1024).decode()
-                    send_grid_data_to_flask(data_in)
-                    print("Received from Grid:", data_in)
+                    data_ing = conn.recv(1024).decode()
+                    print("here")
+                    send_grid_data_to_flask(data_ing)
+                    print("ended")
+                    print("Received from Grid:", data_ing)
                     conn.send("GRID".encode())
 
                 elif data_in == "Storage":
-                    data_in = conn.recv(1024).decode()
-                    print("Received from Storage:", data_in)
-                    send_cap_data_to_flask(data_in)
-                    if data_in != "0":
-                        algo_out = helper.energyAlgorithm(46 - float(data_in))
+                    data_ins = conn.recv(1024).decode()
+                    print("Received from Storage:", data_ins)
+                    send_cap_data_to_flask(data_ins)
+                    if data_ins != "0":
+                        algo_out = helper.energyAlgorithm(46 - float(data_ins))
                         conn.send(str(algo_out).encode())
                         print("Sent Storage:", algo_out)
                     else:
