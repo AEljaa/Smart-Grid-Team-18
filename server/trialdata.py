@@ -48,7 +48,7 @@ class MyServer:
                 if not data_in:
                     break
                 print("Received:", data_in)
-
+                conn.send(str(data_in).encode())
                 if data_in in ["LED1", "LED2", "LED3", "LED4"]:
                     try:
                         data_out = helper.greedyDeferable()
