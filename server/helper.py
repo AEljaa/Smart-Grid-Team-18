@@ -79,8 +79,8 @@ def energyAlgorithm(currAmount):
     if decr:
         res = currAmount * ratio * -1  # sell
     if incr:
-        res = (45 - currAmount) * (1 - ratio)  # buy
-    return res
+        res = (7 - currAmount) * (1 - ratio)  # buy
+    return res + 0.25
 
 def return_irradiance():
     _, _, _, _, _, irradiance = fetch_latest()
@@ -97,7 +97,7 @@ def greedyDeferable():
     demand, tick, deferablelist, ourtick = loaddeferable()
     if not deferablelist:
         print("All deferables are processed, list is empty")
-        return demand  # No more, just do demand
+        return demand + 0.01 # No more, just do demand
 
     max_index = max(int(key) for key in deferablelist) if deferablelist else -1
     ratiolist = [0] * (max_index + 1)
@@ -118,7 +118,7 @@ def greedyDeferable():
 
         max_ratio = 0
         position = -1
-
+        print("Ratio list",ratiolist)
         for i in range(len(ratiolist)):
             if ratiolist[i] >= max_ratio:
                 position = i
@@ -127,11 +127,13 @@ def greedyDeferable():
         if position == -1:
             # No valid position found
             print("No valid deferable position found")
-            return demand
 
-        if (len(deferablelist) == 1):
             ourtick = tick
-            return demand  # No deferable
+            return (demand + 0.01)
+
+        if (len(deferablelist) == 0):
+            ourtick = tick
+            return (demand + 0.01) # No deferable
 
         print(f"Selected deferable position: {position} with max ratio: {max_ratio}")
         deferable_key = str(position)  # Convert position back to string to access deferablelist
