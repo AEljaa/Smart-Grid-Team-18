@@ -58,7 +58,7 @@ def greedyDeferable():
         max_ratio = 0
         position = -1
         for i in range(len(ratiolist)):
-            if ratiolist[i] >= max_ratio:
+            if ratiolist[i] >max_ratio:
                 position = i
                 max_ratio = ratiolist[i]
 
@@ -83,13 +83,14 @@ def greedyDeferable():
             ourvalue = 4
             return 4  # Tell load to max out since we are maximizing with greedy algo
         else:
-            deferablelist[deferable_key][1] -= 5 * freepower  # If less deferable energy than free room, use deferable amount + demand
+            temp = deferablelist[deferable_key][1]
+            deferablelist[deferable_key][1] = 0  # If less deferable energy than free room, use deferable amount + demand
             print("Deferable at", deferablelist[deferable_key], "has", deferablelist[deferable_key][1])
             ourtick = tick
             cleanandsave(deferablelist, ourtick)
             print("Assigning tick")
-            ourvalue = (deferablelist[deferable_key][1] / 5) + demand
-            return (deferablelist[deferable_key][1] / 5) + demand  # Convert deferable value back to power
+            ourvalue = temp/5 + demand
+            return ourvalue # Convert deferable value back to power
     else:
         print("LED is on same tick")
         return demand
