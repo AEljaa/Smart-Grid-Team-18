@@ -3,7 +3,7 @@ import network
 import time
 import time
 import socket
-# import threading
+
 
 #Connnections to the server+ definitions of send and recieve data
 class myclient():
@@ -64,8 +64,8 @@ class myclient():
                 
                 
 
-SSID = 'WompWomp'
-PASSWORD = '12345678'
+SSID = 'sus'
+PASSWORD = 'suspassword'
 def connectwifi (ssid, password):
 
     wlan = network.WLAN(network.STA_IF)
@@ -74,7 +74,7 @@ def connectwifi (ssid, password):
     ip=wlan.ifconfig()[0]
     print(ip)
     
-connectwifi('sus','suspassword')
+connectwifi(SSID,PASSWORD)
 
 # Basic signals to control logic flow
 global timer_elapsed
@@ -145,7 +145,7 @@ ina_i2c = I2C(0, scl=Pin(1), sda=Pin(0), freq=2400000)
 pwm = PWM(Pin(9))
 pwm.freq(100000)
 min_pwm=0
-max_pwm = 40000
+max_pwm = 62000
 pwm_out = min_pwm
 
 
@@ -170,6 +170,8 @@ while True:
         kp=10
         irradience=0
         counter=5000
+        ein=0
+        e_count=0
     
     if timer_elapsed == 1: # This is executed at 1kHz
         va = 1.017*(12490/2490)*3.3*(va_pin.read_u16()/65536) # calibration factor * potential divider ratio * ref voltage * digital reading
@@ -196,14 +198,21 @@ while True:
         # Keep a count of how many times we have executed and reset the timer so we can go back to waiting
         count += 1
         timer_elapsed = 0
+        e_count+=1
+        if e_count>100:
+            ein = ein+(pin*0.1)
+            e_count=0
         
         # This set of prints executes every 1000 loops (every 1s)
         if count >= 5000:
+            start_time = time.time()
             sender=myclient("192.168.43.86",5001)
-            sender.senddata(str("PV"),str(pin))
+            sender.senddata(str("PV"),str(ein))
             irradience=int(sender.irradiencein)
             sender.close()
-            print("{},{},{},{}".format(pin,irradience,i_ref,iL)) 
+            print("--- %s seconds ---" % (time.time() - start_time))
+            print("{},{},{},{},{},{}".format(pin,ein,irradience,i_ref,iL,duty)) 
             count = 0
+            ein=0
 
 
