@@ -61,30 +61,27 @@ class MyServer:
                     conn.send("GRID".encode())
 
                 elif data_in == "Storage":
-                    data_in = conn.recv(1024).dec
-                    print("Revieved from Storage:", str(self.mydatain))
-                    send_cap_data_to_flask(self.mydatain)
-                    if self.mydatain!="0": #if we have no enge
-                        algoout=helper.energyAlgorithm(float(self.mydatain))
-                        self.mydataout=str(algoout)
-                        conn.send(self.mydataout.encode())
-                        print("Sent Storage:", float(self.mydataout))
+                    data_in = conn.recv(1024).decode()
+                    print("Received from Storage:", data_in)
+                    send_cap_data_to_flask(data_in)
+                    if data_in != "0":
+                        algo_out = helper.energyAlgorithm(46 - float(data_in))
+                        conn.send(str(algo_out).encode())
+                        print("Sent Storage:", algo_out)
                     else:
-                        self.mydataout="0"
-                        conn.send(self.mydataout.encode())
-                        print("Sent Storage:", float(self.mydataout))
+                        conn.send("0".encode())
+                        print("Sent Storage: 0")
 
-                elif self.mydatain == "PV":
+                elif data_in == "PV":
                     self.currentengmade = float(conn.recv(1024).decode())
-                    print(self.currentengmade)
-                    self.mydataout = str(helper.return_irradiance())
-                    conn.send(self.mydataout.encode())
-                    print("Sent PV:", str(self.mydataout))
+                    data_out = str(helper.return_irradiance())
+                    conn.send(data_out.encode())
+                    print("Sent PV:", data_out)
 
                 else:
-                    self.mydataout = "sorry, you are not recognized"
-                    conn.send(self.mydataout.encode())
-                    print("Sent PV:", str(self.mydataout))
+                    data_out = "sorry, you are not recognized"
+                    conn.send(data_out.encode())
+                    print("Sent:", data_out)
         except Exception as e:
             print("Error:", e)
         finally:
@@ -109,7 +106,7 @@ class MyServer:
         self.mySocket.close()
 
 if __name__ == "__main__":
-    server = MyServer('192.168.43.86', 5001)
+    server = MyServer('192.168.203.234', 5001)
     server_thread = threading.Thread(target=server.start, daemon=True)
     server_thread.start()
 
@@ -121,4 +118,3 @@ if __name__ == "__main__":
         print("Server shutting down...")
         server.stop = True
         server_thread.join()
-
