@@ -90,7 +90,7 @@ i_ref = -0.1 # Voltage reference for the CL modes
 i_err = 0 # Voltage error
 i_err_int = 0 # Voltage error integral
 i_pi_out = 0 # Output of the voltage PI controller
-ki = 30 # Boost Integral Gain
+ki = 40 # Boost Integral Gain
 kp=10
 counter=5000
 
@@ -117,8 +117,10 @@ while True:
         pin=vin*iin
 #         i_ref = -0.912*irradience/100
         if counter>=5000:
-#             index+=1
-            index=7
+            index+=1
+#             index=0
+
+            
             if index>20:
                 index=0
             counter=0
@@ -141,7 +143,7 @@ while True:
         # This set of prints executes every 100 loops (every 0.2s)
         if count > 100:
             
-            print("{},{},{},{},{}".format(pin,iL,i_ref,index,irradience[index])) 
+            print("{},{},{},{}".format(pin,iL,i_ref,irradience[index]) )
             count = 0
 
 
