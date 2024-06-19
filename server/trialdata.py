@@ -88,4 +88,38 @@ class MyServer:
                     conn.send(data_out.encode())
                     print("Sent:", data_out)
         except Exception as e:
-            print("Error
+            print("Error": {e}")
+        finally:
+            conn.close()
+            print(f"Disconnected: {addr}")
+
+    def start(self):
+        self.mySocket.listen(5)
+        print(f"Server listening on {self.host}:{self.port}")
+        while not self.stop:
+            try:
+                conn, addr = self.mySocket.accept()
+                client_thread = threading.Thread(target=self.handle_client, args=(conn, addr))
+                client_thread.daemon = True
+                client_thread.start()
+            except KeyboardInterrupt:
+                print("Quitting")
+                self.stop = True
+            except Exception as e:
+                print(f"Error accepting connections: {e}")
+
+        self.mySocket.close()
+
+if __name__ == "__main__":
+    server = MyServer('192.168.203.234', 5001)
+    server_thread = threading.Thread(target=server.start, daemon=True)
+    server_thread.start()
+
+    # Keep the main thread running to catch keyboard interrupts
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Server shutting down...")
+        server.stop = True
+        server_thread.join()
