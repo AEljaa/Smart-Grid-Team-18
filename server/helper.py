@@ -5,7 +5,8 @@ import numpy as np
 import joblib
 
 url = "http://127.0.0.1:4000/helper"  # from our flask api
-model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithreadserver\ml.pkl")
+model = joblib.load("ml.pkl")
+#model = joblib.load(r"C:\Users\Student\Desktop\summerproj\SummerProjWeb\multithreadserver\ml.pkl")
 fname = "../db/deferable_db.json"  # our json database, if it doesn't exist, it gets made
 
 def loaddeferable():
@@ -89,7 +90,7 @@ def greedyDeferable():
     freepower = 4 - demand
     global ourtick
     global ourvalue
-    print("OURTICK:", ourtick, "CURRENTTICK:", tick)
+    print("OURTICK", ourtick, "CURRENTTICK", tick)
     print("Demand:", demand, "Tick:", tick, "Deferable List:", deferablelist)
     
     if not deferablelist:
@@ -99,10 +100,8 @@ def greedyDeferable():
     if ourtick != tick:
         print("Current tick is not equal to our tick")
         for key, deferable in deferablelist.items():
-            print(f"Processing deferable {key}: {deferable}")
             if deferable[2] <= tick:
                 ratiolist[int(key)] = (deferable[1] / (deferable[0] - deferable[2]))
-                print(f"Ratio for deferable {key}: {ratiolist[int(key)]}")
         max_ratio = 0
         position = 0
         
@@ -111,23 +110,20 @@ def greedyDeferable():
                 position = i
                 max_ratio = ratiolist[i]
         
-        print(f"Selected deferable position: {position} with max ratio: {max_ratio}")
-
         if deferablelist[str(position)][1] - 5 * freepower >= 0:  # Maximize how much of the deferable we do
             deferablelist[str(position)][1] -= 5 * freepower
-            print(f"Deferable at position {position} after deduction: {deferablelist[str(position)]}")
+            print("Deferable at", deferablelist[str(position)], "has", deferablelist[str(position)][1])
             cleanandsave(deferablelist)
             ourtick = tick
             ourvalue = 4
             return 4  # tell load to max out since we are maximizing with greedy algo
         else:
             deferablelist[str(position)][1] -= 5 * freepower  # if less deferable energy than free room, use deferable amount + demand
-            print(f"Deferable at position {position} after partial deduction: {deferablelist[str(position)]}")
+            print("Deferable at", deferablelist[str(position)], "has", deferablelist[str(position)][1])
             cleanandsave(deferablelist)
             ourtick = tick
-            ourvalue = (deferablelist[str(position)][1] / 5) + demand
-            return (deferablelist[str(position)][1] / 5) + demand  # convert deferable value back to power
+            ourvalue = (deferablelist[position][1] / 5) + demand
+            return (deferablelist[position][1] / 5) + demand  # convert deferable value back to power
     else:
-        print("LED is on the same tick")
+        print("LED is on same tick")
         return ourvalue
-
