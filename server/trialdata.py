@@ -62,3 +62,63 @@ class MyServer:
 
                 elif data_in == "Storage":
                     data_in = conn.recv(1024).dec
+                    print("Revieved from Storage:", str(self.mydatain))
+                    send_cap_data_to_flask(self.mydatain)
+                    if self.mydatain!="0": #if we have no enge
+                        algoout=helper.energyAlgorithm(float(self.mydatain))
+                        self.mydataout=str(algoout)
+                        conn.send(self.mydataout.encode())
+                        print("Sent Storage:", float(self.mydataout))
+                    else:
+                        self.mydataout="0"
+                        conn.send(self.mydataout.encode())
+                        print("Sent Storage:", float(self.mydataout))
+
+                elif self.mydatain == "PV":
+                    self.currentengmade = float(conn.recv(1024).decode())
+                    print(self.currentengmade)
+                    self.mydataout = str(helper.return_irradiance())
+                    conn.send(self.mydataout.encode())
+                    print("Sent PV:", str(self.mydataout))
+
+                else:
+                    self.mydataout = "sorry, you are not recognized"
+                    conn.send(self.mydataout.encode())
+                    print("Sent PV:", str(self.mydataout))
+        except Exception as e:
+            print("Error:", e)
+        finally:
+            conn.close()
+            print("Disconnected:", str(addr))
+
+    def start(self):
+        self.mySocket.listen(5)
+        print(f"Server listening on {self.host}:{self.port}")
+        while not self.stop:
+            try:
+                conn, addr = self.mySocket.accept()
+                client_thread = threading.Thread(target=self.handle_client, args=(conn, addr))
+                client_thread.daemon = True
+                client_thread.start()
+            except KeyboardInterrupt:
+                print("Quitting")
+                self.stop = True
+            except Exception as e:
+                print("Error:", e)
+
+        self.mySocket.close()
+
+if __name__ == "__main__":
+    server = MyServer('192.168.43.86', 5001)
+    server_thread = threading.Thread(target=server.start, daemon=True)
+    server_thread.start()
+
+    # Keep the main thread running to catch keyboard interrupts
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Server shutting down...")
+        server.stop = True
+        server_thread.join()
+
