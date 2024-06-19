@@ -58,11 +58,11 @@ def greedyDeferable():
         max_ratio = 0
         position = -1
         for i in range(len(ratiolist)):
-            if ratiolist[i] >max_ratio:
+            if ratiolist[i] > max_ratio:
                 position = i
                 max_ratio = ratiolist[i]
 
-        if position == -1:
+        if position == -1 or max_ratio ==0:
             # No valid position found
             ourtick = tick
             return demand + 0.01
