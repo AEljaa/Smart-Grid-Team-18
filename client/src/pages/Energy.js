@@ -12,6 +12,8 @@ export default function Energy() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+
+        let startTime = performance.now();
         let response = await fetch("http://127.0.0.1:4000/forward_grid_data")
         let gridData = await response.json()
          
@@ -24,7 +26,9 @@ export default function Energy() {
         setBuyPrice(data.buy_price);
         setSellPrice(data.sell_price);
 
-        console.log(gridData)
+
+        let endTime = performance.now();
+        console.log(`Duration: ${endTime - startTime}ms`);
       } catch (error) {
         console.error(error);
       }

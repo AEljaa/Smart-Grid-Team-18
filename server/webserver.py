@@ -1,7 +1,9 @@
 from flask import Flask, jsonify , request
 import requests
 from flask_cors import CORS
+import json
 
+fname = "../db/deferable_db.json"  # our json database, if it doesn't exist, it gets made
 last_three_sell_prices = []
 grid_data={}
 cap_data=""
@@ -82,6 +84,16 @@ def get_deferables_data():
         response = requests.get('https://icelec50015.azurewebsites.net/deferables')
         deferable_data = response.json()
         return jsonify(deferable_data)
+    except Exception as e:
+        print(f"Error fetching deferables data: {e}")
+        return jsonify({'error': 'An error occurred while fetching deferables data'}), 500
+
+@app.route('/curr_deferables', methods=['GET'])
+def get_curr_deferables_data():
+    try:
+        with open(fname, 'r+b') as f:
+            data = json.load(f)
+        return jsonify(data)
     except Exception as e:
         print(f"Error fetching deferables data: {e}")
         return jsonify({'error': 'An error occurred while fetching deferables data'}), 500

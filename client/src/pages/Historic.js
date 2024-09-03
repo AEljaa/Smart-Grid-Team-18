@@ -30,6 +30,8 @@ export default function Historic() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+
+        let startTime = performance.now();
         let response = await fetch("http://127.0.0.1:4000/yesterday");
         let yesterdayData = await response.json();
         response = await fetch("http://127.0.0.1:4000/forward_cap_graph_data");
@@ -98,6 +100,8 @@ export default function Historic() {
         setChartData(data);
         setChartCapData(CapData);
         setChartGridData(GridData);
+        let endTime = performance.now();
+        console.log(`Duration: ${endTime - startTime}ms`);
       } catch (error) {
         console.error(error);
       }

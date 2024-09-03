@@ -53,11 +53,14 @@ def fetch_latest():
         }, index=[0])
     return inputData, price, tick, lags, demand, irradiance
 
-def naive_algorithm(price, yesterday_list):
-    if price < sum(yesterday_list) / len(yesterday_list):
-        print("BUY")
+def naive_algorithm(currAmount):
+    incr = 1 if currAmount <= 0.25 else 0  # if cap 0 then max out (niave)
+    if incr:
+        return (7 - currAmount)
     else:
-        print("SELL")
+        return 0
+
+
 
 def energyAlgorithm(currAmount):
     input, _, _, _, _, _ = fetch_latest()
@@ -85,6 +88,65 @@ def return_demand():
 
 ourvalue = 4
 
+def niaveDeferable():
+    demand, tick, deferablelist, ourtick = loaddeferable()
+    if not deferablelist:
+        return demand + 0.01  # No more, just do demand
+
+    max_index = max(int(key) for key in deferablelist) if deferablelist else -1
+    validlist = [0] * (max_index + 1)  # only have ratios for how many deferables there are
+    freepower = 4 - demand
+    global ourvalue
+
+    print("OURTICK", ourtick, "CURRENTTICK", tick)
+
+    if ourtick != tick:
+        for key, deferable in deferablelist.items():
+            key_int = int(key)  # Convert key to integer
+            if deferable[2] <= tick:
+                print("Current tick", tick, " Deferable", deferable)
+                validlist[key_int] = (1)
+
+        print("Current Valid list", validlist)
+        max_ratio = 0
+        position = -1
+        for i in range(len(validlist)):
+            if validlist[i] > max_ratio:
+                position = i
+                max_ratio = validlist[i]
+
+        if position == -1 or max_ratio == 0:
+            # No valid position found
+            ourtick = tick
+            return demand + 0.01
+
+        deferable_key = str(position)  # Convert position back to string to access deferablelist
+        if deferable_key not in deferablelist:
+            ourtick = tick
+            return demand + 0.01  # Safety check if key somehow doesn't exist
+        
+        
+        print(f"Selected deferable position: {position} with max ratio: {max_ratio}")
+        if deferablelist[deferable_key][1] - 5 * freepower >= 0:  # Maximize how much of the deferable we do
+            deferablelist[deferable_key][1] -= 5 * freepower
+            print("Deferable at", deferablelist[deferable_key], "has", deferablelist[deferable_key][1])
+            ourtick = tick
+            cleanandsave(deferablelist, ourtick)
+            print("Assigning tick")
+            ourvalue = 4
+            return 4  # Tell load to max out since we are maximizing with greedy algo
+        else:
+            temp = deferablelist[deferable_key][1]
+            deferablelist[deferable_key][1] = 0  # If less deferable energy than free room, use deferable amount + demand
+            print("Deferable at", deferablelist[deferable_key], "has", deferablelist[deferable_key][1])
+            ourtick = tick
+            cleanandsave(deferablelist, ourtick)
+            print("Assigning tick")
+            ourvalue = temp/5 + demand
+            return ourvalue # Convert deferable value back to power
+    else:
+        print("LED is on same tick")
+        return demand
 
 def greedyDeferable():
     demand, tick, deferablelist, ourtick = loaddeferable()
