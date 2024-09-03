@@ -52,10 +52,11 @@ This is the directory structure that was used for the project.
 Directory    | Use
 :-----------:|:------------------------------------------------
 [`client`](./client/)     | React webpage
-[`server`](./server/)     | Flask Web Server and Data Server
-[`ml`](./ml/)         | Machine Learning 
-[`Storage`](./Storage/)    | Capacitor Code
-[`PV`](./PV/)         | PV Code
-[`Grid`](./Grid/)       | Grid Code
-[`LED`](./LED/)       | LED Code
+[`server`](./server/)     | Flask web server and data server
+[`ml`](./ml/)         | Machine learning 
+[`Storage`](./Storage/)    | Capacitor code
+[`PV`](./PV/)         | PV code
+[`Grid`](./Grid/)       | Grid code
+[`LED`](./LED/)       | LED code
+[`db`](./db/)       | Data base code
 ___
