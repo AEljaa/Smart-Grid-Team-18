@@ -60,3 +60,7 @@ Directory    | Use
 [`LED`](./LED/)       | LED code
 [`db`](./db/)       | Data base code
 ___
+
+## Results
+Below you can see a video of the smart grid running. 
+[![Smart Grid Video](https://img.youtube.com/vi/qLZ7yFC_RUk/0.jpg)](https://youtu.be/qLZ7yFC_RUk)
