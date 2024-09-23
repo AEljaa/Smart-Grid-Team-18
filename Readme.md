@@ -27,8 +27,6 @@ Secondly run the command `cd server` and run `python3 webserver.py` now open ano
 
 Lastly run the commands `cd client`, then run `npm install` and finally run `npm start` to start the webpage.
 
-Please see our project write up for more detail regarding the engineering behind the teams design [`Smart_Grid.pdf`](./Smart_Grid.pdf) 
-
 ## Contribution Table
 
 **Key:** o = Main Contributor; v = Co-Author
@@ -62,8 +60,7 @@ Directory    | Use
 
 ___
 ## Documents 
-[Interim Presentation](https://www.canva.com/design/DAGGnyTdIyU/v3l1MlDU6QnrnRmbECQcOQ/view?utm_content=DAGGnyTdIyU&utm_campaign=designshare&utm_medium=link&utm_source=editor)<br/>
-[Final Report](FILE_NAME.pdf)
+Please see our project write up for more detail regarding the engineering behind the teams design [`Smart_Grid.pdf`](./Smart_Grid.pdf) and our [Interim Presentation](https://www.canva.com/design/DAGGnyTdIyU/v3l1MlDU6QnrnRmbECQcOQ/view?utm_content=DAGGnyTdIyU&utm_campaign=designshare&utm_medium=link&utm_source=editor).
 ___
 
 ## Results
