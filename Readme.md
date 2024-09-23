@@ -60,7 +60,7 @@ Directory    | Use
 
 ___
 ## Documents 
-Please see our project write up for more detail regarding the engineering behind the teams design [`Smart_Grid.pdf`](./Smart_Grid.pdf) and our [Interim Presentation](https://www.canva.com/design/DAGGnyTdIyU/v3l1MlDU6QnrnRmbECQcOQ/view?utm_content=DAGGnyTdIyU&utm_campaign=designshare&utm_medium=link&utm_source=editor).
+Please see our project write up for more detail regarding the engineering behind the teams design [`Smart_Grid.pdf`](./Smart_Grid.pdf) and our ['Interim Presentation'](https://www.canva.com/design/DAGGnyTdIyU/v3l1MlDU6QnrnRmbECQcOQ/view?utm_content=DAGGnyTdIyU&utm_campaign=designshare&utm_medium=link&utm_source=editor).
 ___
 
 ## Results
